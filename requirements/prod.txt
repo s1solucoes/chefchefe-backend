@@ -1,0 +1,7 @@
+-r base.txt
+
+# Servidor web
+uvicorn==0.34.0
+
+# Banco de Dados e ORM
+psycopg2==2.9.10

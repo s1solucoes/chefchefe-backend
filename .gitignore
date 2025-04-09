@@ -1,0 +1,50 @@
+# Arquivos do bytecode do Python
+__pycache__
+*.py[cod]
+*$py.class
+
+# Arquivos de build
+build/
+dist/
+*.egg-info/
+
+# Arquivos gerados pelo Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+media
+
+# Se estiver usando PostgreSQL, você vai querer ignorar isso
+*.env
+
+# Se estiver usando SQLite3, você vai querer ignorar isso
+*.sqlite3
+
+# Arquivos de backup
+*~
+#*#
+
+# Arquivos de teste
+.coverage
+.coverage.*
+coverage.xml
+.hypothesis/
+.pytest_cache/
+
+# Arquivos de ambiente virtual
+venv/
+ENV/
+
+# Arquivos do PyCharm e do VSCode
+.idea
+.vscode
+
+# Pasta usada para assets estáticos coletados pelo collectstatic
+staticfiles/
+
+# Pasta usada para arquivos de mídia enviados pelo usuário
+media/
+
+.DS_Store%

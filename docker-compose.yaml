@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:latest
+    env_file:
+      - docker.env
+    ports:
+      - 127.0.0.1:5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  
+  web:
+    image: matheussantos/chefchefe:latest
+    container_name: chefchefe-web
+    build:
+      context: .
+      target: production
+    env_file:
+      - docker.env
+    healthcheck:
+      test: ["CMD", "/usr/bin/curl", "http://127.0.0.1:8000/login/?next=/"]
+    ports:
+      - 127.0.0.1:8001:8000
+    volumes:
+      - ./src:/srv:delegated
+    command:
+      - python3
+      - manage.py
+      - runserver
+      - "0.0.0.0:8000"
+    depends_on:
+      - postgres
+      
+volumes:
+  postgres_data:
