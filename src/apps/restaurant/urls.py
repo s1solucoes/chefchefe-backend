@@ -1,7 +1,6 @@
 from rest_framework import routers
-from apps.restaurant.api.viewsets import PaymentMethodViewSet, EmployeeViewSet, RestaurantViewSet
+from .api.viewsets import RestaurantViewSet, TableViewSet
 restaurant_router = routers.DefaultRouter()
 
-restaurant_router.register(r'payment-method', PaymentMethodViewSet)
-restaurant_router.register(r'employee', EmployeeViewSet)
-restaurant_router.register(r'restaurant', RestaurantViewSet)
+restaurant_router.register(r'restaurants', RestaurantViewSet, basename='restaurant')
+restaurant_router.register(r'tables', TableViewSet, basename='table')

@@ -1,25 +1,44 @@
 from apps.user.models import User
 from rest_framework import serializers
+from apps.restaurant.models import Restaurant, UserRestaurant
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class UserLoginSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
-    email = serializers.EmailField(required=True)
-    restaurants = serializers.SerializerMethodField()
+    email = serializers.EmailField(required=True, write_only=True)
+    restaurant_token = serializers.CharField(write_only=True, required=True)
+    refresh = serializers.CharField(read_only=True)
+    access = serializers.CharField(read_only=True)
+    restaurant_id = serializers.UUIDField(read_only=True)
     class Meta:
         model = User
-        fields = ('email', 'password', 'first_name', 'last_name', 'restaurants', 'id')
-        read_only_fields = ('restaurants', 'first_name', 'last_name', 'id')
+        fields = ['refresh', 'access', 'email', 'password', 'restaurant_token', 'restaurant_id']
 
-    def get_restaurants(self, obj):
-        user_restaurants = obj.user_restaurants.filter(is_active=True, restaurant__is_active=True)
-        data = []
-        for user_r in user_restaurants:
-            data.append({
-                'name': user_r.restaurant.name,
-                'id': user_r.restaurant.id,
-                'role': user_r.role,
-                'permissions': user_r.permission.all().values('permission', 'method'),
-                'logo': user_r.restaurant.logo.url if user_r.restaurant.logo else None
-            })
-        return data
+    def create(self, validated_data):
+        email = validated_data.get('email')
+        password = validated_data.get('password')
+        restaurant_token = validated_data.get('restaurant_token')
+
+        try:
+            restaurant = Restaurant.objects.get(token=restaurant_token)
+        except Restaurant.DoesNotExist:
+            raise serializers.ValidationError('Usário ou senha incorretos.')
         
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError('Usuário ou senha incorretos.')
+
+        if not user.check_password(password):
+            raise serializers.ValidationError('Usuário ou senha incorretos.')
+        
+        if not UserRestaurant.objects.filter(user=user, restaurant=restaurant, is_active=True, is_deleted=False).exists():
+            raise serializers.ValidationError('Usuário ou senha incorretos.')
+        
+        refresh = RefreshToken.for_user(user)
+        refresh['restaurant_id'] = str(restaurant.id)
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'restaurant_id': str(restaurant.id)
+        }

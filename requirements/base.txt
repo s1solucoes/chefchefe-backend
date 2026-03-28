@@ -1,15 +1,14 @@
-# Django e Extensões
-Django==5.1.6
-django-localflavor==4.0
-django-model-utils==5.0.0
-django-phonenumber-field==8.0.0
-djangorestframework==3.15.2
-djangorestframework-simplejwt==5.4.0
-django-cors-headers==4.6.0
-django-filter==24.3
+Django
+django-localflavor
+django-model-utils
+django-phonenumber-field
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+django-filter
 
 # Utilidades e Ferramentas
-phonenumbers==8.13.48
-dj-database-url==2.3.0
+phonenumbers
+dj-database-url
 
 whitenoise

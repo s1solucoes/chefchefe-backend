@@ -42,6 +42,24 @@ INSTALLED_APPS = [
 
     'apps.user',
     'apps.restaurant',
+    'apps.crm',
+    'apps.products',
+    'apps.financial',
+
+    'rest_framework',
+    'corsheaders',
+    'django_filters',
+    'rest_framework_simplejwt',
+]
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_METHODS = True
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'Authorization',
+    'content-type',
+    'account-id',
 ]
 
 MIDDLEWARE = [
@@ -108,7 +126,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "en-us")
+LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "pt-br")
 LOCALE_PATHS = [BASE_DIR / 'locale'] 
 TIME_ZONE = os.getenv("TZ", "America/Sao_Paulo")
 
@@ -138,9 +156,12 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 50,
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 }
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=3),

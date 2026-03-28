@@ -1,6 +1,5 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from model_utils.models import TimeStampedModel, UUIDModel
 from model_utils.fields import MonitorField
@@ -35,11 +34,11 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser, TimeStampedModel, UUIDModel):
-    email = models.EmailField(_('email address'), unique=True)
-    phone = PhoneNumberField(_('phone'), region='BR')
-    verified_email = models.BooleanField(_('verified email'), default=False)
+    email = models.EmailField('email', unique=True)
+    phone = PhoneNumberField('telefone', region='BR')
+    verified_email = models.BooleanField('email verificado', default=False)
     verified_email_at = MonitorField(monitor='verified_email')
-    verified_phone = models.BooleanField(_('verified phone'), default=False)
+    verified_phone = models.BooleanField('telefone verificado', default=False)
     verified_phone_at = MonitorField(monitor='verified_phone')
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
