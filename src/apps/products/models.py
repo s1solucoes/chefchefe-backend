@@ -25,56 +25,6 @@ class Category(BaseModel):
 
     def __str__(self):
         return self.name + ' | ' + self.restaurant.name
-
-class Complement(BaseModel):
-    name = models.CharField('nome', max_length=255)
-    description = models.TextField('descrição', blank=True, default='')
-    price = models.DecimalField('preço', max_digits=10, decimal_places=2, default=0.00)
-
-    max = models.PositiveIntegerField('max', default=1)
-    min = models.PositiveIntegerField('min', default=0)
-
-    tag = models.CharField('tag', max_length=255, blank=True, default='')
-
-    position = models.PositiveIntegerField('ordem', default=0)
-
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='complements')
-
-    class Meta:
-        verbose_name = 'complemento'
-        verbose_name_plural = 'complementos'
-        ordering = ['position', 'name']
-
-    def __str__(self):
-        return self.name + ' | ' + self.restaurant.name +' | ' + self.tag + ' | ' + str(self.price)
-
-class ComplementGroupRules(models.TextChoices):
-    HIGH = 'HIGH', 'Maior'
-    SUM = 'SUM', 'Soma'
-    MEDIAN = 'MEDIAN', 'Mediana'
-
-class ComplementGroup(BaseModel):
-    name = models.CharField('nome', max_length=255)
-    tag = models.CharField('tag', max_length=255, blank=True, default='')
-    position = models.PositiveIntegerField('ordem', default=0)
-    rule = models.CharField('regra', max_length=10, choices=ComplementGroupRules.choices, default=ComplementGroupRules.SUM)
-    min = models.PositiveIntegerField('mínimo', default=0)
-    max = models.PositiveIntegerField('máximo', default=1)
-
-    complements = models.ManyToManyField(Complement, related_name='complement_groups')
-
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='complement_groups')
-
-    class Meta:
-        verbose_name = 'grupo de complementos'
-        verbose_name_plural = 'grupos de complementos'
-        ordering = ['position', 'name']
-
-    def __str__(self):
-        return self.name + ' | ' + self.tag + ' | ' + self.restaurant.name
-
-
-
 class ProductSellType(models.TextChoices):
     UN = 'UN', 'Unidade'
     KG = 'KG', 'Quilo'
@@ -98,19 +48,58 @@ class Product(BaseModel):
 
     def __str__(self):
         return self.name + ' | ' + self.restaurant.name
+class ComplementGroupRules(models.TextChoices):
+    HIGH = 'HIGH', 'Maior'
+    SUM = 'SUM', 'Soma'
+    MEDIAN = 'MEDIAN', 'Mediana'
 
-class ProductComplementGroup(BaseModel):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='complement_groups')
-    complement_group = models.ForeignKey(ComplementGroup, on_delete=models.CASCADE, related_name='products')
+class ComplementGroup(BaseModel):
+    name = models.CharField('nome', max_length=255)
+    tag = models.CharField('tag', max_length=255, blank=True, default='')
     position = models.PositiveIntegerField('ordem', default=0)
+    rule = models.CharField('regra', max_length=10, choices=ComplementGroupRules.choices, default=ComplementGroupRules.SUM)
+    min = models.PositiveIntegerField('mínimo', default=0)
+    max = models.PositiveIntegerField('máximo', default=1)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='complement_groups')
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='complement_groups')
 
     class Meta:
-        verbose_name = 'grupo de complementos do produto'
-        verbose_name_plural = 'grupos de complementos dos produtos'
-        ordering = ['position']
+        verbose_name = 'grupo de complementos'
+        verbose_name_plural = 'grupos de complementos'
+        ordering = ['position', 'name']
 
     def __str__(self):
-        return self.product.name + ' | ' + self.complement_group.name
+        return self.name + ' | ' + self.tag + ' | ' + self.restaurant.name
+class Complement(BaseModel):
+    name = models.CharField('nome', max_length=255)
+    description = models.TextField('descrição', blank=True, default='')
+    price = models.DecimalField('preço', max_digits=10, decimal_places=2, default=0.00)
+
+    max = models.PositiveIntegerField('max', default=1)
+    min = models.PositiveIntegerField('min', default=0)
+
+    tag = models.CharField('tag', max_length=255, blank=True, default='')
+
+    position = models.PositiveIntegerField('ordem', default=0)
+
+    complement_group = models.ForeignKey(ComplementGroup, on_delete=models.CASCADE, related_name='complements')
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='complements')
+
+    class Meta:
+        verbose_name = 'complemento'
+        verbose_name_plural = 'complementos'
+        ordering = ['position', 'name']
+
+    def __str__(self):
+        return self.name + ' | ' + self.restaurant.name +' | ' + self.tag + ' | ' + str(self.price)
+
+
+
+
+
+
+
+
 
 
 

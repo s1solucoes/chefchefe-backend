@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, ComplementGroup, Complement, ProductComplementGroup, Bill
+from .models import Category, Product, ComplementGroup, Complement, Bill
 # Register your models here.
 
 @admin.register(Category)
@@ -9,9 +9,9 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('name', 'restaurant')
 
 class ProductComplementGroupInline(admin.TabularInline):
-    model = ProductComplementGroup
+    model = ComplementGroup
     extra = 0
-
+    show_change_link = True
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductComplementGroupInline]
@@ -19,14 +19,15 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ('category', 'restaurant', 'printer', 'is_active')
     search_fields = ('name', 'code')
 
+class ComplementInline(admin.TabularInline):
+    model = Complement
+    extra = 0
+
 
 @admin.register(ComplementGroup)
 class ComplementGroupAdmin(admin.ModelAdmin):
-    filter_horizontal = ('complements',)
+    inlines = [ComplementInline]
 
-@admin.register(Complement)
-class ComplementAdmin(admin.ModelAdmin):
-    pass
 
 @admin.register(Bill)
 class BillAdmin(admin.ModelAdmin):

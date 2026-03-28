@@ -64,17 +64,19 @@ class DiscountMethodChoices(models.TextChoices):
     PERCENTAGE_VARIABLE = 'PERCENTAGE_VARIABLE', 'Porcentagem Variável'
 
 class DiscountCode(BaseModel):
-    code = models.CharField('código', max_length=50, unique=True)
+    code = models.CharField('código', max_length=50)
     method = models.CharField('método', max_length=20, choices=DiscountMethodChoices.choices, default=DiscountMethodChoices.VALUE)
     min_value = models.DecimalField('valor mínimo', max_digits=10, decimal_places=2, default=0.00)
     max_value = models.DecimalField('valor máximo', max_digits=10, decimal_places=2, default=0.00)
-    
+    limit = models.PositiveIntegerField('limite de uso', default=0, help_text='Quantas vezes este código pode ser usado. Deixe 0 para ilimitado.')
+    used_count = models.PositiveIntegerField('usado', default=0)
     users_allowed = models.ManyToManyField(Employee, related_name='discount_codes_allowed', blank=True, help_text='Funcionários que podem usar este código de desconto. Se vazio, todos os funcionários podem usar.')
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='discount_codes')
 
     class Meta:
         verbose_name = 'código de desconto'
         verbose_name_plural = 'códigos de desconto'
+        unique_together = ['code', 'restaurant']
         ordering = ['code']
 
     def __str__(self):

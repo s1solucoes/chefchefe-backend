@@ -102,13 +102,14 @@ class Restaurant(BaseModel):
 
 
 class NumberIdCounter(models.Model):
-    name = models.SlugField('name', max_length=255, unique=True)
+    name = models.SlugField('name', max_length=255)
     value = models.PositiveIntegerField('value', default=0)
     restaurant = models.ForeignKey(Restaurant, verbose_name='restaurant', on_delete=models.CASCADE, related_name='number_id_counters')
 
     class Meta:
         verbose_name = 'Ultimo ID'
         verbose_name_plural = 'Ultimos IDs'
+        unique_together = ['name', 'restaurant']
 
     def __str__(self):
         return self.name + ' - ' + str(self.value)
@@ -137,11 +138,9 @@ class Employee(BaseModel):
 
     is_admin = models.BooleanField('é administrador', default=False)
     can_delete_item = models.BooleanField('pode excluir item', default=False)
-    can_delete_bill = models.BooleanField('pode excluir conta', default=False)
+    can_delete_bill = models.BooleanField('pode excluir comanda', default=False)
     can_transfer_order = models.BooleanField('pode transferir pedido', default=False)
     can_change_payment = models.BooleanField('pode alterar pagamento', default=False)
-    can_open_cashier = models.BooleanField('pode abrir caixa', default=False)
-    can_login_on_desktop = models.BooleanField('pode fazer login no desktop', default=False)
 
     office = models.CharField('cargo', max_length=255, blank=True, default='')
     sallary = models.DecimalField('salário', max_digits=10, decimal_places=2, default=0.0)
