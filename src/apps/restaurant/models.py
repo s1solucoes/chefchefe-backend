@@ -1,9 +1,10 @@
-from django.db import models
+from django.db import models, transaction
 from model_utils.models import TimeStampedModel, UUIDModel
 from model_utils.fields import MonitorField
 from phonenumber_field.modelfields import PhoneNumberField
 from localflavor.br.models import BRPostalCodeField, BRStateField
 from apps.user.models import User
+from django.db.models import F
 import random
 import string
 
@@ -113,6 +114,21 @@ class NumberIdCounter(models.Model):
 
     def __str__(self):
         return self.name + ' - ' + str(self.value)
+    
+    @classmethod
+    def get_next(cls, restaurant, name):
+        with transaction.atomic():
+            counter, _ = cls.objects.select_for_update().get_or_create(
+                restaurant=restaurant,
+                name=name,
+                defaults={'value': 0}
+            )
+
+            counter.value = F('value') + 1
+            counter.save()
+            counter.refresh_from_db()
+
+            return counter.value
 
 class RoleTypes(models.TextChoices):
     OWNER = 'OWNER', 'Proprietário'
@@ -141,6 +157,8 @@ class Employee(BaseModel):
     can_delete_bill = models.BooleanField('pode excluir comanda', default=False)
     can_transfer_order = models.BooleanField('pode transferir pedido', default=False)
     can_change_payment = models.BooleanField('pode alterar pagamento', default=False)
+    can_open_cashier = models.BooleanField('pode abrir caixa', default=False)
+    can_close_cashier = models.BooleanField('pode fechar caixa', default=False)
 
     office = models.CharField('cargo', max_length=255, blank=True, default='')
     sallary = models.DecimalField('salário', max_digits=10, decimal_places=2, default=0.0)

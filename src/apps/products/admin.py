@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, ComplementGroup, Complement, Bill
+from .models import Category, Product, ComplementGroup, Complement, Bill, Order, OrderComplement, BillGroup
 # Register your models here.
 
 @admin.register(Category)
@@ -31,4 +31,41 @@ class ComplementGroupAdmin(admin.ModelAdmin):
 
 @admin.register(Bill)
 class BillAdmin(admin.ModelAdmin):
+    search_fields = ('number', 'identification', 'restaurant__name')
+
+class OrderComplementInline(admin.TabularInline):
+    model = OrderComplement
+    extra = 0
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    inlines = [OrderComplementInline]
+    autocomplete_fields = ('bill', 'product', 'canceled_by', 'launched_by')
+    list_display = ('number', 'product', 'quantity', 'total_price', 'status', 'bill', 'launched_by', 'canceled_by')
+    list_filter = ('status', 'restaurant')
+    list_display_links = ('number', 'product')
+    readonly_fields = ('number', 'restaurant', 'id', 'created', 'modified')
+    search_fields = ('product__name', 'number__exact')
+    fieldsets = (
+        ('', {
+            'fields': ('restaurant','number', 'status', 'bill', 'product', 'product_name', 'quantity', 'unit_price', 'complements_price', 'total_price', 'notes', 'complements_details'),
+            'classes': ('wide', 'extrapretty')
+        }),
+        ('Pessoas', {
+            'fields': ('launched_by', 'launched_by_name', 'canceled_by', 'canceled_by_name'),
+            'classes': ('collapse', 'extrapretty')
+        }),
+         ('Datas', {
+            'fields': ('status_changed', 'created', 'modified'),
+            'classes': ('collapse', 'extrapretty')
+        }),
+        ( 'Meta', {
+            'fields': ('id', 'is_active', 'is_deleted'),
+            'classes': ('collapse', 'extrapretty')
+        }),
+    )
+
+
+@admin.register(BillGroup)
+class BillGroupAdmin(admin.ModelAdmin):
     pass

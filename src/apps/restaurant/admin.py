@@ -58,7 +58,7 @@ class EmployeeAdmin(admin.ModelAdmin):
             'classes': ('collapse', 'extrapretty')
         }),
         ('Permissões', {
-            'fields': ('is_admin', 'is_active', 'can_delete_item', 'can_delete_bill', 'can_transfer_order', 'can_change_payment', 'can_open_cashier'),
+            'fields': ('is_admin', 'is_active', 'can_delete_item', 'can_delete_bill', 'can_transfer_order', 'can_change_payment', 'can_open_cashier', 'can_close_cashier'),
             'classes': ('collapse', 'extrapretty')
         }),
     )

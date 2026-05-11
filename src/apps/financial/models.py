@@ -4,7 +4,7 @@ from localflavor.br.models import BRCPFField, BRCNPJField
 from phonenumber_field.modelfields import PhoneNumberField
 from apps.crm.models import Customer
 from model_utils.fields import MonitorField
-from apps.restaurant.models import Employee, Restaurant
+from apps.restaurant.models import Employee, NumberIdCounter, Restaurant
 # Create your models here.
 
 class BaseModel(TimeStampedModel, UUIDModel):
@@ -30,10 +30,16 @@ class Cashier(BaseModel):
 
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='cashiers')
 
+    def get_current_value(self):
+        return self.transactions.filter(status='COMPLETED').aggregate(total=models.Sum('amount'))['total'] or 0.00
+
     class Meta:
         verbose_name = 'caixa'
         verbose_name_plural = 'caixas'
         ordering = ['-created']
+
+    def __str__(self):
+        return f'{self.identification} - {self.created.strftime("%d/%m/%Y %H:%M")}'
 
 class MethodsChoices(models.TextChoices):
     CREDIT_CARD = 'CREDIT_CARD', 'Cartão de Crédito'
@@ -45,13 +51,18 @@ class MethodsChoices(models.TextChoices):
 class PaymentMethod(BaseModel):
     method = models.CharField('método', max_length=20, choices=MethodsChoices.choices, default=MethodsChoices.CASH)
     description = models.CharField('descrição', max_length=255, blank=True, default='')
-    postition = models.PositiveIntegerField('ordem', default=0)
+    position = models.PositiveIntegerField('ordem', default=0)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='payment_methods')
 
     class Meta:
         verbose_name = 'método de pagamento'
         verbose_name_plural = 'métodos de pagamento'
-        ordering = ['postition', 'method']
+        ordering = ['position', 'method']
+
+    @property
+    def display_name(self):
+        d_name = MethodsChoices(self.method).label if self.method in MethodsChoices.values else self.method
+        return f'{d_name} {self.description}' if self.method != MethodsChoices.OTHER else self.description if self.description else 'Outro'
 
     def __str__(self):
         return f'{self.method} {self.description}' if self.method != MethodsChoices.OTHER else f'{self.description}'
@@ -92,10 +103,7 @@ class Sale(BaseModel):
     cashier = models.ForeignKey(Cashier, on_delete=models.CASCADE, related_name='sales')
     status = models.CharField('status', max_length=20, choices=SalesStatusChoices.choices, default=SalesStatusChoices.PENDING)
     status_changed = MonitorField('status changed', monitor='status', null=True, blank=True)
-
-    subtotal = models.DecimalField('subtotal', max_digits=10, decimal_places=2, default=0.00)
-    discount = models.DecimalField('desconto', max_digits=10, decimal_places=2, default=0.00)
-    total = models.DecimalField('total', max_digits=10, decimal_places=2, default=0.00)
+ 
 
     discount_code = models.ForeignKey(DiscountCode, on_delete=models.SET_NULL, related_name='sales', null=True, blank=True)
     discount_code_code = models.CharField('código do desconto', max_length=50, blank=True, default='')
@@ -109,8 +117,14 @@ class Sale(BaseModel):
     client_phone = PhoneNumberField('telefone do cliente', blank=True, default=None, null=True, region='BR')
 
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='sales')
-
+    subtotal = models.DecimalField('subtotal', max_digits=10, decimal_places=2, default=0.00)
+    discount = models.DecimalField('desconto', max_digits=10, decimal_places=2, default=0.00)
     tip_value = models.DecimalField('valor da gorjeta', max_digits=10, decimal_places=2, default=0.00)
+    total = models.DecimalField('total', max_digits=10, decimal_places=2, default=0.00)
+    received = models.DecimalField('valor recebido', max_digits=10, decimal_places=2, default=0.00)
+    exchange = models.DecimalField('troco', max_digits=10, decimal_places=2, default=0.00)
+    balance = models.DecimalField('saldo', max_digits=10, decimal_places=2, default=0.00)
+
     tip_percentage = models.DecimalField('porcentagem da gorjeta', max_digits=5, decimal_places=2, default=0.00)
 
     canceled_by = models.ForeignKey(Employee, on_delete=models.SET_NULL, related_name='sales_canceled', null=True, blank=True)
@@ -118,13 +132,29 @@ class Sale(BaseModel):
 
     description = models.TextField('descrição', blank=True, default='')
 
+    number_id = models.PositiveIntegerField('número', default=0)
+
     class Meta:
         verbose_name = 'venda'
         verbose_name_plural = 'vendas'
         ordering = ['-created']
 
 
+    def __str__(self):
+        return f'Venda {self.number_id} - {self.created.strftime("%d/%m/%Y %H:%M")}'
     
+    def save(self, *args, **kwargs):
+        if not self.number_id or self.number_id == 0:
+            self.number_id = NumberIdCounter.get_next(self.restaurant, 'sale_number_id')
+        super().save(*args, **kwargs)
+
+class TransactionTypeChoices(models.TextChoices):
+    SALE = 'SALE', 'Venda'
+    EXCHANGE = 'EXCHANGE', 'Troco'
+    SANGRIA = 'SANGRIA', 'Sangria'
+    SUPPLY = 'SUPPLY', 'Suprimento'
+    OTHER = 'OTHER', 'Outro'
+
 class Transaction(BaseModel):
     description = models.CharField('descrição', max_length=255, blank=True, default='')
     sale = models.ForeignKey(Sale, on_delete=models.SET_NULL, related_name='transactions', null=True, blank=True)
@@ -133,9 +163,8 @@ class Transaction(BaseModel):
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.SET_NULL, related_name='transactions', null=True, blank=True)
     method_description = models.CharField('descrição do método', max_length=255, blank=True, default='')
 
-    received_value = models.DecimalField('valor recebido', max_digits=10, decimal_places=2, default=0.00)
-    exchange = models.DecimalField('troco', max_digits=10, decimal_places=2, default=0.00)
-    total = models.DecimalField('total', max_digits=10, decimal_places=2, default=0.00)
+    amount = models.DecimalField('valor', max_digits=10, decimal_places=2, default=0.00)
+    type = models.CharField('tipo', max_length=20, choices=TransactionTypeChoices.choices, default=TransactionTypeChoices.SALE)
 
     status = models.CharField('status', max_length=20, choices=SalesStatusChoices.choices, default=SalesStatusChoices.PENDING)
     status_changed = MonitorField('status changed', monitor='status', null=True, blank=True)
@@ -145,9 +174,17 @@ class Transaction(BaseModel):
 
     notes = models.TextField('observações', blank=True, default='')
 
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='transactions')
+
     class Meta:
         verbose_name = 'transação'
         verbose_name_plural = 'transações'
         ordering = ['-created']
 
+    def type_display(self):
+        return TransactionTypeChoices(self.type).label if self.type in TransactionTypeChoices.values else self.type
 
+    def save(self, *args, **kwargs):
+        if self.payment_method:
+            self.method_description = self.payment_method.display_name
+        super().save(*args, **kwargs)

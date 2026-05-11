@@ -1,6 +1,8 @@
-from django.db import models
-from model_utils.models import TimeStampedModel, UUIDModel
+from decimal import Decimal
 
+from django.db import models, transaction
+from model_utils.models import TimeStampedModel, UUIDModel
+from model_utils.fields import MonitorField
 from apps.restaurant.models import Restaurant, Printer, Table, Employee, NumberIdCounter
 from apps.financial.models import Sale
 
@@ -30,14 +32,14 @@ class ProductSellType(models.TextChoices):
     KG = 'KG', 'Quilo'
 class Product(BaseModel):
     name = models.CharField('nome', max_length=255)
+    slug = models.SlugField('slug', max_length=255, blank=True, default='', db_index=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='products')
     description = models.TextField('descrição', blank=True, default='')
     price = models.DecimalField('preço', max_digits=10, decimal_places=2)
-    code = models.CharField('código', max_length=255, blank=True, default='')
+    code = models.CharField('código', max_length=255, blank=True, default='', db_index=True)
     printer = models.ForeignKey(Printer, on_delete=models.SET_NULL, related_name='products', null=True, blank=True)
     sell_type = models.CharField('tipo de venda', max_length=10, choices=ProductSellType.choices, default=ProductSellType.UN)
     position = models.PositiveIntegerField('ordem', default=0)
-
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='products')
 
 
@@ -93,17 +95,6 @@ class Complement(BaseModel):
     def __str__(self):
         return self.name + ' | ' + self.restaurant.name +' | ' + self.tag + ' | ' + str(self.price)
 
-
-
-
-
-
-
-
-
-
-
-
 class Bill(BaseModel):
     number = models.PositiveIntegerField('número', default=0)
     identification = models.CharField('identificação', max_length=255, blank=True, default='')
@@ -137,6 +128,14 @@ class Bill(BaseModel):
         super().save(*args, **kwargs)
     
 
+
+class BillGroup(BaseModel):
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='bill_groups')
+    bills = models.ManyToManyField(Bill, related_name='bill_groups', blank=True)
+
+    def __str__(self):
+        return f'Grupo de Comandas - {self.restaurant.name} - {self.created.strftime("%Y-%m-%d %H:%M:%S")}'
+
 class OrderStatus(models.TextChoices):
     PENDING = 'PENDING', 'Pendente'
     IN_PROGRESS = 'IN_PROGRESS', 'Em preparo'
@@ -146,21 +145,28 @@ class OrderStatus(models.TextChoices):
 
 class Order(BaseModel):
     number = models.PositiveIntegerField('número', default=0)
-    bill = models.ForeignKey(Bill, on_delete=models.SET_NULL, related_name='orders', null=True, blank=True)
+    bill = models.ForeignKey(Bill, on_delete=models.CASCADE, related_name='orders')
     product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='orders')
     product_name = models.CharField('nome do produto', max_length=255)
-    quantity = models.DecimalField('quantidade', max_digits=10, decimal_places=2, default=1)
-    unit_price = models.DecimalField('preço unitário', max_digits=10, decimal_places=2, default=0.00)
-    complements_price = models.DecimalField('preço dos complementos', max_digits=10, decimal_places=2, default=0.00)
-    total_price = models.DecimalField('preço total', max_digits=10, decimal_places=2, default=0.00)
     notes = models.TextField('observações', blank=True, default='')
     status = models.CharField('status', max_length=20, choices=OrderStatus.choices, default=OrderStatus.PENDING)
+    status_changed = MonitorField(monitor='status', blank=True, null=True, verbose_name='status changed')
+    
+    complements_price = models.DecimalField('preço dos complementos', max_digits=10, decimal_places=2, default=0.00)
+    unit_price = models.DecimalField('preço unitário', max_digits=10, decimal_places=2, default=0.00)
+    quantity = models.DecimalField('quantidade', max_digits=11, decimal_places=3, default=1)
+    total_price = models.DecimalField('preço total', max_digits=10, decimal_places=2, default=0.00)
 
     canceled_by = models.ForeignKey(Employee, on_delete=models.SET_NULL, related_name='orders_canceled', null=True, blank=True)
     canceled_by_name = models.CharField('cancelada por', max_length=255, blank=True, default='')
+    cancel_notes = models.TextField('observações de cancelamento', blank=True, default='')
 
     launched_by = models.ForeignKey(Employee, on_delete=models.SET_NULL, related_name='orders_launched', null=True, blank=True)
     launched_by_name = models.CharField('lançada por', max_length=255, blank=True, default='')
+
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='orders')
+
+    complements_details = models.JSONField('detalhes dos complementos', blank=True, null=True)
     class Meta:
         verbose_name = 'pedido'
         verbose_name_plural = 'pedidos'
@@ -170,24 +176,27 @@ class Order(BaseModel):
         return f'#{self.number}'
     
     def calculate_complements_price(self):
-        return sum([complement.total_price for complement in self.complements.all()])
-    
-    def calculate_total_price(self):
-        self.total_price = self.quantity * self.unit_price + (self.quantity * self.calculate_complements_price())
+        self.complements_price = sum([complement.total_price for complement in self.complements.all()])
         self.save()
+        
+    def calculate_total_price(self):
+        self.total_price = self.quantity * (self.unit_price + Decimal(self.complements_price))
+        return self.save()
     
+    @transaction.atomic
     def save(self, *args, **kwargs):
         if self.number == 0:
-            counter, created = NumberIdCounter.objects.get_or_create(restaurant=self.bill.restaurant, name='order_number')
-            counter.value += 1
-            counter.save()
-            self.number = counter.value
+            self.number = NumberIdCounter.get_next(self.restaurant, 'order_number')
         if self.product:
             if not self.product_name:
                 self.product_name = self.product.name
-            if not self.unit_price:
+            if not self.unit_price or self.unit_price == 0:
                 self.unit_price = self.product.price
-        super().save(*args, **kwargs)
+        if self.launched_by and not self.launched_by_name:
+            self.launched_by_name = self.launched_by.name
+        if self.canceled_by and not self.canceled_by_name:
+            self.canceled_by_name = self.canceled_by.name
+        return super().save(*args, **kwargs)
     
 class OrderComplement(BaseModel):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='complements')
@@ -196,7 +205,6 @@ class OrderComplement(BaseModel):
     quantity = models.DecimalField('quantidade', max_digits=10, decimal_places=2, default=1)
     unit_price = models.DecimalField('preço unitário', max_digits=10, decimal_places=2, default=0.00)
     total_price = models.DecimalField('preço total', max_digits=10, decimal_places=2)
-
     class Meta:
         verbose_name = 'complemento do pedido'
         verbose_name_plural = 'complementos dos pedidos'
@@ -204,5 +212,15 @@ class OrderComplement(BaseModel):
 
     def __str__(self):
         return f'{self.complement_name} - {self.order}'
+    
+    def save(self, *args, **kwargs):
+        if self.complement:
+            if not self.complement_name:
+                self.complement_name = self.complement.name
+            if not self.unit_price or self.unit_price == 0:
+                self.unit_price = self.complement.price
+        if not self.total_price or self.total_price == 0:
+            self.total_price = self.quantity * self.unit_price
+        super().save(*args, **kwargs)
     
 
