@@ -82,6 +82,9 @@ class CreateOrderSerializer(serializers.ModelSerializer):
     code = serializers.CharField(required=True, write_only=True)
     product_name = serializers.CharField(source='product.name', read_only=True)
     complements = serializers.JSONField(write_only=True, required=False)
+    table_number = serializers.CharField(source='bill.table.number', read_only=True)
+    bill_number = serializers.CharField(source='bill.number', read_only=True)
+    bill_identification = serializers.CharField(source='bill.identification', read_only=True)
     class Meta:
         model = Order
         read_only_fields = ['id', 'number', 'launched_by']
@@ -99,6 +102,11 @@ class CreateOrderSerializer(serializers.ModelSerializer):
             'launched_by',
             'product_name',
             'complements',
+            'launched_by_name',
+            'created',
+            'table_number',
+            'bill_number',
+            'bill_identification',
         ]
 
     @transaction.atomic
