@@ -116,7 +116,7 @@ class BillFilter(filters.FilterSet):
 
 class BillViewSet(ModelViewSet):
     serializer_class = BillSerializer
-    http_method_names = ['get', 'post']
+    http_method_names = ['get', 'post', 'patch']
     pagination_class = None
     filter_backends = [DjangoFilterBackend]
     filterset_class = BillFilter    
@@ -161,6 +161,7 @@ class CreateOrderViewSet(ViewSet):
                 status="DELIVERED",
                 quantity=order_data['quantity'],
                 total_price=order_data['quantity'] * order_data['unit_price'],
+                unit_price=order_data['unit_price'],
                 restaurant_id=restaurant_id,
                 launched_by_id=employee_id,
             ))
