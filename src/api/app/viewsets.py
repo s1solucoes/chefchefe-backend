@@ -2,9 +2,9 @@ from rest_framework.viewsets import ModelViewSet, ViewSet
 from rest_framework.response import Response
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
-from apps.products.models import Bill, Product, Complement, ComplementGroup
+from apps.products.models import Bill, Order, Product, Complement, ComplementGroup
 from rest_framework.permissions import AllowAny
-from rest_framework.decorators import permission_classes
+from django.db import transaction
 from django.db.models import Prefetch, Q
 from apps.restaurant.models import Table
 from .serializers import (
@@ -136,4 +136,35 @@ class BillViewSet(ModelViewSet):
             if Bill.objects.filter(restaurant_id=restaurant_id, number=number, is_open=True).exists():
                 return Response({'detail': 'Já existe uma comanda aberta com esse número.'}, status=400)
         return super().create(request, *args, **kwargs)
+    
+class CreateOrderViewSet(ViewSet):
+    http_method_names = ['post']
+
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        restaurant_id = self.request.auth.get('restaurant_id')
+        employee_id = self.request.auth.get('employee_id')
+        if not restaurant_id or not employee_id:
+            return Response({'detail': 'Autenticação inválida.'}, status=401)
+        orders = request.data.get('orders', [])
+        if not isinstance(orders, list):
+            return Response({'detail': 'O corpo da requisição deve ser uma lista de pedidos.'}, status=400)
+        if not orders:
+            return Response({'detail': 'Nenhum pedido fornecido.'}, status=400)
+        to_create = []
+        for order_data in orders:
+            to_create.append(Order(
+                bill_id=order_data['bill'],
+                product_id=order_data['product'],
+                notes=order_data['notes'],
+                status="DELIVERED",
+                quantity=order_data['quantity'],
+                total_price=order_data['quantity'] * order_data['unit_price'],
+                restaurant_id=restaurant_id,
+                launched_by_id=employee_id,
+            ))
+
+        # orders: [{ bill: id_da_comanda, product: id_produto, notes: 'sem cebola', quantity: 2, unit_price: 10.00 }]
+        Order.objects.bulk_create(to_create)
+        return Response({'detail': 'Pedidos criados com sucesso.'}, status=201)
 
