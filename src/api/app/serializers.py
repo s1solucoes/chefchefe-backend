@@ -105,6 +105,7 @@ class LoginSerializer(serializers.ModelSerializer):
         }
     
 class BillSerializer(serializers.ModelSerializer):
+    table_number = serializers.CharField(source='table.number', read_only=True)
     class Meta:
         model = Bill
         fields = [
@@ -115,8 +116,7 @@ class BillSerializer(serializers.ModelSerializer):
             'opened_by',
             'opened_by_name',
             'table',
-            'closed_at',
-            'opened_at',
+            'table_number',
         ]
 
     def create(self, validated_data):
