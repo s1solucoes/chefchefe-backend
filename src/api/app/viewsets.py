@@ -153,6 +153,14 @@ class CreateOrderViewSet(ViewSet):
         if not orders:
             return Response({'detail': 'Nenhum pedido fornecido.'}, status=400)
         to_create = []
+        bill_id = orders[0].get('bill')
+        if not bill_id:
+            return Response({'detail': 'Cada pedido deve conter o campo "bill".'}, status=400)
+        bill = Bill.objects.filter(id=bill_id, restaurant_id=restaurant_id).first()
+        if not bill:
+            return Response({'detail': 'Comanda não encontrada.'}, status=404)
+        if not bill.is_open:
+            return Response({'detail': 'A comanda está fechada.'}, status=400)
         for order_data in orders:
             to_create.append(Order(
                 bill_id=order_data['bill'],
