@@ -193,5 +193,5 @@ class OrdersViewSet(ModelViewSet):
                 return Order.objects.all()
             return Order.objects.none()
         restaurant_id = self.request.auth.get('restaurant_id')
-        queryset = Order.objects.filter(restaurant_id=restaurant_id).select_related('product').order_by('-created')
+        queryset = Order.objects.filter(restaurant_id=restaurant_id).exclude(status="CANCELED").select_related('product').order_by('-created')
         return queryset

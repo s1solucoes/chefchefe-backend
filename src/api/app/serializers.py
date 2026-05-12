@@ -139,4 +139,5 @@ class OrdersSerializer(serializers.ModelSerializer):
             "unit_price",
             "total_price",
             "notes",
+            "created"
         ]
