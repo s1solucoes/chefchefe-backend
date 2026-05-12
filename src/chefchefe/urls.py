@@ -9,6 +9,7 @@ from apps.user.urls import user_router
 from apps.restaurant.urls import restaurant_router
 from apps.products.urls import bill_router
 from api.desktop.urls import router_desktop
+from api.app.urls import router_app
 router = DefaultRouter()
 import os
 admin.sites.AdminSite.site_header = os.environ.get('ENVIRONMENT_HEADER', 'Local Administração ChefChefe')
@@ -22,6 +23,7 @@ urlpatterns = [
     path('api/v1/products/', include(bill_router.urls)),
     path('api/v1/restaurant/', include(restaurant_router.urls)),
     path('api/v1/desktop/', include(router_desktop.urls)),
+    path('api/v1/app/', include(router_app.urls)),
     path('api/v1/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v1/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
