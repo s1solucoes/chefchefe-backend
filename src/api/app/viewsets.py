@@ -12,6 +12,7 @@ from .serializers import (
     ProductSerializer,
     TableSerializer,
     BillSerializer,
+    OrdersSerializer
 )
 
 
@@ -164,7 +165,24 @@ class CreateOrderViewSet(ViewSet):
                 launched_by_id=employee_id,
             ))
 
-        # orders: [{ bill: id_da_comanda, product: id_produto, notes: 'sem cebola', quantity: 2, unit_price: 10.00 }]
+        # 
         Order.objects.bulk_create(to_create)
         return Response({'detail': 'Pedidos criados com sucesso.'}, status=201)
 
+
+
+class OrdersViewSet(ModelViewSet):
+    serializer_class = OrdersSerializer
+    http_method_names = ['get']
+    pagination_class = None
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['bill']
+
+    def get_queryset(self):
+        if self.request.auth is None:
+            if self.request.user.is_superuser:
+                return Order.objects.all()
+            return Order.objects.none()
+        restaurant_id = self.request.auth.get('restaurant_id')
+        queryset = Order.objects.filter(restaurant_id=restaurant_id).select_related('product').order_by('-created')
+        return queryset

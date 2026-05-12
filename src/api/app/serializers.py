@@ -4,7 +4,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from rest_framework import serializers
 from apps.products.models import (
-    Bill, Product, Complement, ComplementGroup
+    Bill, Order, Product, Complement, ComplementGroup
 )
 from apps.restaurant.models import Employee, Restaurant, Table
 from apps.financial.models import PaymentMethod
@@ -125,3 +125,18 @@ class BillSerializer(serializers.ModelSerializer):
         validated_data['restaurant_id'] = restaurant_id
         validated_data['opened_by_id'] = employee_id
         return super().create(validated_data)
+    
+
+class OrdersSerializer(serializers.ModelSerializer):
+    product_name = serializers.CharField(source='product.name', read_only=True)
+    class Meta:
+        model = Order
+        fields = [
+            "id",
+            "number",
+            "product_name",
+            "quantity",
+            "unit_price",
+            "total_price",
+            "notes",
+        ]

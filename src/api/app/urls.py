@@ -4,7 +4,8 @@ from .viewsets import (
     ProductViewSet,
     TableViewSet,
     BillViewSet,
-    CreateOrderViewSet
+    CreateOrderViewSet,
+    OrdersViewSet
 )
 router_app = DefaultRouter()
 router_app.register(r'login', LoginViewSet, basename='app-login')
@@ -12,3 +13,4 @@ router_app.register(r'products', ProductViewSet, basename='app-product')
 router_app.register(r'tables', TableViewSet, basename='app-table')
 router_app.register(r'bills', BillViewSet, basename='app-bill')
 router_app.register(r'create-order', CreateOrderViewSet, basename='app-create-order')
+router_app.register(r'orders', OrdersViewSet, basename='app-orders')
