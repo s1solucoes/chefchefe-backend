@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ModelViewSet, ViewSet
 from apps.products.models import Product, ComplementGroup, Complement, Order, Bill, BillGroup
-from apps.restaurant.models import Restaurant, Table
-from .serializers import CashierDetailSerializer, ProductSerializer, CreateOrderSerializer, BillSerializer, BillDetailSerializer, RestaurantSerializer, TableSerializer, BillGroupSerializer, CashierSerializer, PaymentMethodSerializer, SaleSerializer, TransactionSerializer
+from apps.restaurant.models import PrintJob, Restaurant, Table
+from .serializers import CashierDetailSerializer, PrintJobSerializer, ProductSerializer, CreateOrderSerializer, BillSerializer, BillDetailSerializer, RestaurantSerializer, TableSerializer, BillGroupSerializer, CashierSerializer, PaymentMethodSerializer, SaleSerializer, TransactionSerializer
 from django_filters import rest_framework as filters
 from apps.financial.models import Cashier, PaymentMethod, Transaction, Sale
 from django_filters.rest_framework import DjangoFilterBackend
@@ -393,3 +393,32 @@ class TransactionViewSet(ModelViewSet):
             return Transaction.objects.none()
         restaurant_id = self.request.auth.get('restaurant_id')
         return Transaction.objects.filter(restaurant_id=restaurant_id).order_by('-created')
+    
+
+class PrintJobViewSet(ModelViewSet):
+    serializer_class = PrintJobSerializer
+    http_method_names = ['get', 'patch']
+    pagination_class = None
+
+    def get_queryset(self):
+        if self.request.auth is None:
+            if self.request.user.is_superuser:
+                return PrintJob.objects.all()
+            return PrintJob.objects.none()
+        restaurant_id = self.request.auth.get('restaurant_id')
+        queryset = PrintJob.objects.filter(restaurant_id=restaurant_id).select_related('printer').order_by('created')
+        return queryset
+    
+    def list(self, request, *args, **kwargs):
+        first = self.get_queryset().filter(status='PENDING').order_by('created').first()
+        if first:
+            serializer = self.get_serializer(first)
+            return Response({
+                'found': True,
+                'print_job': serializer.data
+            })
+        else:
+            return Response({
+                'found': False,
+                'print_job': None
+            }, status=200)

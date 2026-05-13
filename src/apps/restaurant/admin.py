@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Restaurant, UserRestaurant, Employee, Plan, Printer, Table
+from .models import Restaurant, UserRestaurant, Employee, Plan, Printer, Table, PrintJob
 
 # Register your models here.
 
@@ -75,3 +75,10 @@ class PrinterAdmin(admin.ModelAdmin):
 @admin.register(Table)
 class TableAdmin(admin.ModelAdmin):
     pass
+
+@admin.register(PrintJob)
+class PrintJobAdmin(admin.ModelAdmin):
+    list_display = ('id', 'printer', 'created', 'status', 'restaurant')
+    list_filter = ('printer', 'status', 'created', 'restaurant')
+    search_fields = ('id', 'printer__name', 'restaurant__name')
+    date_hierarchy = 'created'

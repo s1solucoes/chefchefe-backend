@@ -6,13 +6,13 @@ from apps.products.models import Bill, Order, Product, Complement, ComplementGro
 from rest_framework.permissions import AllowAny
 from django.db import transaction
 from django.db.models import Prefetch, Q
-from apps.restaurant.models import Table
+from apps.restaurant.models import PrintJob, Table
 from .serializers import (
     LoginSerializer,
     ProductSerializer,
     TableSerializer,
     BillSerializer,
-    OrdersSerializer
+    OrdersSerializer,
 )
 
 
@@ -161,6 +161,7 @@ class CreateOrderViewSet(ViewSet):
             return Response({'detail': 'Comanda não encontrada.'}, status=404)
         if not bill.is_open:
             return Response({'detail': 'A comanda está fechada.'}, status=400)
+        
         for order_data in orders:
             to_create.append(Order(
                 bill_id=order_data['bill'],
@@ -175,7 +176,30 @@ class CreateOrderViewSet(ViewSet):
             ))
 
         # 
-        Order.objects.bulk_create(to_create)
+        orders = Order.objects.bulk_create(to_create)
+        to_print = []
+        for order in orders:
+            if order.product.printer:
+                to_print.append(PrintJob(
+                    printer=order.product.printer,
+                    restaurant_id=restaurant_id,
+                    payload={
+                        "printerName": order.product.printer.name,
+                        "order": {
+                            "number_id": str(order.id),
+                            "table": order.bill.table.number if order.bill.table else "",
+                            "identification": order.bill.identification or "",
+                            "bill_number": order.bill.number or "",
+                            "waiter": order.launched_by_name or "",
+                            "quantity": order.quantity or 0,
+                            "product_name": order.product.name if order.product else "",
+                            "notes": order.notes or "",
+                            "date": order.created.strftime('%d/%m/%Y %H:%M:%S')
+                        },
+                        "type": 'first'
+                    }
+                ))
+        PrintJob.objects.bulk_create(to_print)
         return Response({'detail': 'Pedidos criados com sucesso.'}, status=201)
 
 

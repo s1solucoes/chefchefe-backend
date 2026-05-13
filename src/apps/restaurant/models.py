@@ -208,6 +208,24 @@ class Table(BaseModel):
 
     def __str__(self):
         return f'Mesa {self.number} - {self.restaurant.name}'
+    
+
+class PrintJob(BaseModel):
+    class StatusChoices(models.TextChoices):
+        PENDING = 'PENDING', 'Pendente'
+        SENT = 'SENT', 'Enviado'
+        ERROR = 'ERROR', 'Erro'
+    printer = models.ForeignKey(Printer, verbose_name='impressora', on_delete=models.CASCADE, related_name='print_jobs')
+    payload = models.JSONField('payload')
+    status = models.CharField('status', choices=StatusChoices.choices, default=StatusChoices.PENDING, max_length=10)
+    restaurant = models.ForeignKey(Restaurant, verbose_name='restaurante', on_delete=models.CASCADE, related_name='print_jobs')
+    class Meta:
+        verbose_name = 'tarefa de impressão'
+        verbose_name_plural = 'tarefas de impressão'
+        ordering = ['-created']
+
+    def __str__(self):
+        return f'Tarefa de impressão {self.id} - {self.printer.name} - {self.restaurant.name}'
 
 
 

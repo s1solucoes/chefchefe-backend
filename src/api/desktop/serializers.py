@@ -2,7 +2,7 @@ from rest_framework import serializers
 from apps.products.models import (
     Product, Complement, ComplementGroup, Order, OrderComplement, Bill, BillGroup
 )
-from apps.restaurant.models import Employee, Restaurant, Table
+from apps.restaurant.models import Employee, PrintJob, Restaurant, Table
 from apps.financial.models import Cashier, PaymentMethod, Sale, Transaction
 from django.db import transaction
 from django.db.models import Prefetch
@@ -392,4 +392,10 @@ class TransactionSerializer(serializers.ModelSerializer):
     payment_method_method = serializers.CharField(source='payment_method.method', read_only=True)
     class Meta:
         model = Transaction
+        fields = '__all__'
+
+
+class PrintJobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PrintJob
         fields = '__all__'

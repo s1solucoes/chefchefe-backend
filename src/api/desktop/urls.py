@@ -11,7 +11,8 @@ from .viewsets import (
     PaymentMethodsStatsViewSet,
     FinishBillsViewSet,
     SaleViewSet,
-    TransactionViewSet
+    TransactionViewSet,
+    PrintJobViewSet
 )
 router_desktop = DefaultRouter()
 router_desktop.register(r'products', ProductViewSet, basename='desktop-product')
@@ -26,3 +27,4 @@ router_desktop.register(r'payment-methods-stats', PaymentMethodsStatsViewSet, ba
 router_desktop.register(r'finish-bills', FinishBillsViewSet, basename='desktop-finish-bills')
 router_desktop.register(r'sales', SaleViewSet, basename='desktop-sale')
 router_desktop.register(r'transactions', TransactionViewSet, basename='desktop-transaction')
+router_desktop.register(r'print-jobs', PrintJobViewSet, basename='desktop-print-job')

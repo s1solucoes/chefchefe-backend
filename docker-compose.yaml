@@ -17,8 +17,6 @@ services:
       target: production
     env_file:
       - docker.env
-    healthcheck:
-      test: ["CMD", "/usr/bin/curl", "http://127.0.0.1:8000/login/?next=/"]
     ports:
       - 127.0.0.1:8001:8000
     volumes:

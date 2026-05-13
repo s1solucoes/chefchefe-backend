@@ -5,7 +5,7 @@ from .viewsets import (
     TableViewSet,
     BillViewSet,
     CreateOrderViewSet,
-    OrdersViewSet
+    OrdersViewSet,
 )
 router_app = DefaultRouter()
 router_app.register(r'login', LoginViewSet, basename='app-login')
