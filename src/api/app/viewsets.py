@@ -178,7 +178,12 @@ class CreateOrderViewSet(ViewSet):
         # 
         orders = Order.objects.bulk_create(to_create)
         to_print = []
+        to_update_products = []
         for order in orders:
+            product = order.product
+            if product.stock >= order.quantity:
+                product.stock -= order.quantity
+                to_update_products.append(product)
             if order.product.printer:
                 to_print.append(PrintJob(
                     printer=order.product.printer,
@@ -200,6 +205,7 @@ class CreateOrderViewSet(ViewSet):
                     }
                 ))
         PrintJob.objects.bulk_create(to_print)
+        Product.objects.bulk_update(to_update_products, ['stock'])
         return Response({'detail': 'Pedidos criados com sucesso.'}, status=201)
 
 

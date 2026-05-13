@@ -41,7 +41,8 @@ class Product(BaseModel):
     sell_type = models.CharField('tipo de venda', max_length=10, choices=ProductSellType.choices, default=ProductSellType.UN)
     position = models.PositiveIntegerField('ordem', default=0)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='products')
-
+    stock = models.DecimalField('estoque', max_digits=15, decimal_places=3, default=0)
+    stock_change = MonitorField(monitor='stock', blank=True, null=True, verbose_name='stock changed')
 
     class Meta:
         verbose_name = 'produto'
@@ -50,6 +51,31 @@ class Product(BaseModel):
 
     def __str__(self):
         return self.name + ' | ' + self.restaurant.name
+    
+
+class StockMovement(BaseModel):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='stock_movements')
+    quantity = models.DecimalField('quantidade', max_digits=15, decimal_places=3)
+    notes = models.TextField('observações', blank=True, default='')
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='stock_movements')
+    processed = models.BooleanField('processado', default=False)
+    class Meta:
+        verbose_name = 'movimentação de estoque'
+        verbose_name_plural = 'movimentações de estoque'
+        ordering = ['-created']
+
+    def save(self, *args, **kwargs):
+        if self.quantity != 0 and not self.processed:
+            with transaction.atomic():
+                self.product.stock = models.F('stock') + self.quantity
+                self.product.save()
+                self.processed = True
+                super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'Movimentação de {self.quantity} de {self.product.name} - {self.restaurant.name}'
 class ComplementGroupRules(models.TextChoices):
     HIGH = 'HIGH', 'Maior'
     SUM = 'SUM', 'Soma'

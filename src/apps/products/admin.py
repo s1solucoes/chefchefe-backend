@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, ComplementGroup, Complement, Bill, Order, OrderComplement, BillGroup
+from .models import Category, Product, ComplementGroup, Complement, Bill, Order, OrderComplement, BillGroup, StockMovement
 # Register your models here.
 
 @admin.register(Category)
@@ -15,7 +15,7 @@ class ProductComplementGroupInline(admin.TabularInline):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductComplementGroupInline]
-    list_display = ('name', 'category', 'price', 'restaurant', 'position', 'printer')
+    list_display = ('name', 'category', 'price', 'stock','restaurant', 'position', 'printer')
     list_filter = ('category', 'restaurant', 'printer', 'is_active')
     search_fields = ('name', 'code')
 
@@ -69,3 +69,11 @@ class OrderAdmin(admin.ModelAdmin):
 @admin.register(BillGroup)
 class BillGroupAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(StockMovement)
+class StockMovementAdmin(admin.ModelAdmin):
+    list_display = ('product', 'quantity', 'notes', 'restaurant', 'processed', 'created')
+    list_filter = ('processed', 'restaurant')
+    search_fields = ('product__name', 'restaurant__name', 'notes')
+    date_hierarchy = 'created'

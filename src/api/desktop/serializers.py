@@ -123,6 +123,10 @@ class CreateOrderSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'detail': 'Código de funcionário inválido.'})
         validated_data['launched_by_id'] = employee.id
         order = super().create(validated_data)
+        product = order.product
+        if product.stock >= order.quantity:
+            product.stock -= order.quantity
+            product.save()
         created_complements = []
         for complement_data in complements_data:
             complement = OrderComplement.objects.create(
