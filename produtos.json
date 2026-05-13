@@ -1,0 +1,872 @@
+[
+  {
+    "position": 1,
+    "code": 1,
+    "category": "🍣 Temakis",
+    "name": "Complemento para Temaki HOT",
+    "description": "—",
+    "price": 8,
+    "sell_type": "UN",
+    "printer": "SUSHI"
+  },
+  {
+    "position": 2,
+    "code": 2,
+    "category": "🍣 Temakis",
+    "name": "Temaki Misto",
+    "description": "—",
+    "price": 52,
+    "sell_type": "UN",
+    "printer": "SUSHI"
+  },
+  {
+    "position": 3,
+    "code": 3,
+    "category": "🍣 Temakis",
+    "name": "Kani Kama",
+    "description": "—",
+    "price": 42,
+    "sell_type": "UN",
+    "printer": "SUSHI"
+  },
+  {
+    "position": 4,
+    "code": 4,
+    "category": "🍣 Temakis",
+    "name": "Skin",
+    "description": "Pele de Salmão",
+    "price": 39,
+    "sell_type": "UN",
+    "printer": "SUSHI"
+  },
+  {
+    "position": 5,
+    "code": 5,
+    "category": "🍣 Temakis",
+    "name": "Califórnia",
+    "description": "Frutas",
+    "price": 40,
+    "sell_type": "UN",
+    "printer": "SUSHI"
+  },
+  {
+    "position": 6,
+    "code": 6,
+    "category": "🍣 Temakis",
+    "name": "Filadélfia",
+    "description": "Salmão e Cream Cheese",
+    "price": 42,
+    "sell_type": "UN",
+    "printer": "SUSHI"
+  },
+  {
+    "position": 7,
+    "code": 7,
+    "category": "🍣 Temakis",
+    "name": "Salmão em Cubos",
+    "description": "—",
+    "price": 46,
+    "sell_type": "UN",
+    "printer": "SUSHI"
+  },
+  {
+    "position": 8,
+    "code": 8,
+    "category": "🍣 Temakis",
+    "name": "Patê de Salmão",
+    "description": "—",
+    "price": 43,
+    "sell_type": "UN",
+    "printer": "SUSHI"
+  },
+  {
+    "position": 9,
+    "code": 9,
+    "category": "🍣 Temakis",
+    "name": "Camarão",
+    "description": "—",
+    "price": 52,
+    "sell_type": "UN",
+    "printer": "SUSHI"
+  },
+  {
+    "position": 10,
+    "code": 10,
+    "category": "🍣 Temakis",
+    "name": "À Moda da Casa",
+    "description": "—",
+    "price": 68,
+    "sell_type": "UN",
+    "printer": "SUSHI"
+  },
+  {
+    "position": 11,
+    "code": 11,
+    "category": "➕ Adicionais",
+    "name": "Adicionar Hot",
+    "description": "Adicional para Temaki",
+    "price": 8,
+    "sell_type": "UN",
+    "printer": "SUSHI"
+  },
+  {
+    "position": 12,
+    "code": 12,
+    "category": "🍱 Sushi Self Service",
+    "name": "Sushi Self Service",
+    "description": "100g",
+    "price": 190,
+    "sell_type": "KG",
+    "printer": ""
+  },
+  {
+    "position": 13,
+    "code": 13,
+    "category": "🍟 Petiscos",
+    "name": "Pastéis",
+    "description": "Carne, queijo e frango",
+    "price": 40,
+    "sell_type": "UN",
+    "printer": "COZINHA"
+  },
+  {
+    "position": 14,
+    "code": 14,
+    "category": "🍟 Petiscos",
+    "name": "Camarão Empanado",
+    "description": "Camarões empanados na farinha Panko",
+    "price": 120,
+    "sell_type": "UN",
+    "printer": "COZINHA"
+  },
+  {
+    "position": 15,
+    "code": 15,
+    "category": "🍟 Petiscos",
+    "name": "Coxinha sem Massa",
+    "description": "—",
+    "price": 65,
+    "sell_type": "UN",
+    "printer": "COZINHA"
+  },
+  {
+    "position": 16,
+    "code": 16,
+    "category": "🍟 Petiscos",
+    "name": "Espeto de Queijo Coalho",
+    "description": "—",
+    "price": 40,
+    "sell_type": "UN",
+    "printer": "COZINHA"
+  },
+  {
+    "position": 17,
+    "code": 17,
+    "category": "🍟 Petiscos",
+    "name": "Batata Frita",
+    "description": "—",
+    "price": 60,
+    "sell_type": "UN",
+    "printer": "COZINHA"
+  },
+  {
+    "position": 18,
+    "code": 18,
+    "category": "🍟 Petiscos",
+    "name": "Calabresa",
+    "description": "—",
+    "price": 70,
+    "sell_type": "UN",
+    "printer": "COZINHA"
+  },
+  {
+    "position": 19,
+    "code": 19,
+    "category": "🍟 Petiscos",
+    "name": "Espetão de Picanha",
+    "description": "Acompanha vinagrete, farofa e macaxeira",
+    "price": 110,
+    "sell_type": "UN",
+    "printer": "COZINHA"
+  },
+  {
+    "position": 20,
+    "code": 20,
+    "category": "🍟 Petiscos",
+    "name": "Filé com Fritas",
+    "description": "—",
+    "price": 170,
+    "sell_type": "UN",
+    "printer": "COZINHA"
+  },
+  {
+    "position": 21,
+    "code": 21,
+    "category": "🍟 Petiscos",
+    "name": "Frango a Passarinho",
+    "description": "—",
+    "price": 95,
+    "sell_type": "UN",
+    "printer": "COZINHA"
+  },
+  {
+    "position": 22,
+    "code": 22,
+    "category": "🍟 Petiscos",
+    "name": "Espetão de Maminha",
+    "description": "Acompanha vinagrete, farofa e macaxeira",
+    "price": 90,
+    "sell_type": "UN",
+    "printer": "COZINHA"
+  },
+  {
+    "position": 23,
+    "code": 23,
+    "category": "🍟 Petiscos",
+    "name": "Espetão de Linguiça",
+    "description": "Acompanha vinagrete, farofa e macaxeira",
+    "price": 60,
+    "sell_type": "UN",
+    "printer": "COZINHA"
+  },
+  {
+    "position": 24,
+    "code": 24,
+    "category": "🍟 Petiscos",
+    "name": "Filé Chapeado",
+    "description": "—",
+    "price": 190,
+    "sell_type": "UN",
+    "printer": "COZINHA"
+  },
+  {
+    "position": 25,
+    "code": 25,
+    "category": "🍚 Acompanhamentos",
+    "name": "Arroz Branco",
+    "description": "—",
+    "price": 15,
+    "sell_type": "UN",
+    "printer": "COZINHA"
+  },
+  {
+    "position": 26,
+    "code": 26,
+    "category": "🍚 Acompanhamentos",
+    "name": "Macaxeira",
+    "description": "—",
+    "price": 20,
+    "sell_type": "UN",
+    "printer": "COZINHA"
+  },
+  {
+    "position": 27,
+    "code": 27,
+    "category": "🍚 Acompanhamentos",
+    "name": "Vinagrete",
+    "description": "—",
+    "price": 15,
+    "sell_type": "UN",
+    "printer": "COZINHA"
+  },
+  {
+    "position": 28,
+    "code": 28,
+    "category": "🍚 Acompanhamentos",
+    "name": "Farofa",
+    "description": "—",
+    "price": 10,
+    "sell_type": "UN",
+    "printer": "COZINHA"
+  },
+  {
+    "position": 29,
+    "code": 29,
+    "category": "🍺 Cervejas",
+    "name": "Heineken 350ml",
+    "description": "—",
+    "price": 15,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 30,
+    "code": 30,
+    "category": "🍺 Cervejas",
+    "name": "Heineken 220ml",
+    "description": "—",
+    "price": 10,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 31,
+    "code": 31,
+    "category": "🍺 Cervejas",
+    "name": "Corona 350ml",
+    "description": "—",
+    "price": 12,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 32,
+    "code": 32,
+    "category": "🍺 Cervejas",
+    "name": "Amstel",
+    "description": "—",
+    "price": 10,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 33,
+    "code": 33,
+    "category": "🍺 Cervejas",
+    "name": "Stella Artois",
+    "description": "—",
+    "price": 12,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 34,
+    "code": 34,
+    "category": "🍺 Cervejas",
+    "name": "Sem Álcool",
+    "description": "—",
+    "price": 10,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 35,
+    "code": 35,
+    "category": "🥤 Águas e Refrigerantes",
+    "name": "H2O Limoneto",
+    "description": "—",
+    "price": 10,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 36,
+    "code": 36,
+    "category": "🥤 Águas e Refrigerantes",
+    "name": "Água com Gás",
+    "description": "—",
+    "price": 8,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 37,
+    "code": 37,
+    "category": "🥤 Águas e Refrigerantes",
+    "name": "Água sem Gás",
+    "description": "—",
+    "price": 8,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 38,
+    "code": 38,
+    "category": "🥤 Águas e Refrigerantes",
+    "name": "Refrigerantes",
+    "description": "Todos os refris",
+    "price": 10,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 39,
+    "code": 39,
+    "category": "⚡ Energéticos",
+    "name": "Red Bull",
+    "description": "—",
+    "price": 20,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 40,
+    "code": 40,
+    "category": "🍸 Vodkas",
+    "name": "Vodka Orloff",
+    "description": "Dose",
+    "price": 15,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 41,
+    "code": 41,
+    "category": "🍸 Vodkas",
+    "name": "Vodka Smirnoff",
+    "description": "Dose",
+    "price": 20,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 42,
+    "code": 42,
+    "category": "🍸 Vodkas",
+    "name": "Vodka Absolut",
+    "description": "Dose",
+    "price": 25,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 43,
+    "code": 43,
+    "category": "🍸 Vodkas",
+    "name": "Vodka Orloff",
+    "description": "Garrafa",
+    "price": 110,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 44,
+    "code": 44,
+    "category": "🍸 Vodkas",
+    "name": "Vodka Smirnoff",
+    "description": "Garrafa",
+    "price": 110,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 45,
+    "code": 45,
+    "category": "🍸 Vodkas",
+    "name": "Vodka Absolut",
+    "description": "Garrafa",
+    "price": 180,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 46,
+    "code": 46,
+    "category": "🌵 Tequilas",
+    "name": "Tequila Jose Cuervo",
+    "description": "Dose",
+    "price": 25,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 47,
+    "code": 47,
+    "category": "🌵 Tequilas",
+    "name": "Tequila Jose Cuervo",
+    "description": "Garrafa",
+    "price": 260,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 48,
+    "code": 48,
+    "category": "🍶 Saquês",
+    "name": "Azuma Kirin Dourado",
+    "description": "Dose",
+    "price": 35,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 49,
+    "code": 49,
+    "category": "🍹 Gins",
+    "name": "Gin Tankeray",
+    "description": "Dose",
+    "price": 27,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 50,
+    "code": 50,
+    "category": "🍹 Gins",
+    "name": "Gin Bombay",
+    "description": "Dose",
+    "price": 25,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 51,
+    "code": 51,
+    "category": "🍹 Gins",
+    "name": "Gin Tankeray",
+    "description": "Garrafa",
+    "price": 210,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 52,
+    "code": 52,
+    "category": "🍹 Gins",
+    "name": "Gin Bombay",
+    "description": "Garrafa",
+    "price": 190,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 53,
+    "code": 53,
+    "category": "🥃 Whiskys",
+    "name": "Johnny Walker Red",
+    "description": "Dose",
+    "price": 30,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 54,
+    "code": 54,
+    "category": "🥃 Whiskys",
+    "name": "Johnny Walker Black",
+    "description": "Dose",
+    "price": 40,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 55,
+    "code": 55,
+    "category": "🥃 Whiskys",
+    "name": "Johnny Walker Gold",
+    "description": "Dose",
+    "price": 50,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 56,
+    "code": 56,
+    "category": "🥃 Whiskys",
+    "name": "Buchannan's",
+    "description": "Dose",
+    "price": 40,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 57,
+    "code": 57,
+    "category": "🥃 Whiskys",
+    "name": "Chivas 12 Anos",
+    "description": "Dose",
+    "price": 40,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 58,
+    "code": 58,
+    "category": "🥃 Whiskys",
+    "name": "Chivas 18 Anos",
+    "description": "Dose",
+    "price": 50,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 59,
+    "code": 59,
+    "category": "🥃 Whiskys",
+    "name": "Old Parr",
+    "description": "Dose",
+    "price": 35,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 60,
+    "code": 60,
+    "category": "🥃 Whiskys",
+    "name": "Red Johnny Walker",
+    "description": "Garrafa",
+    "price": 190,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 61,
+    "code": 61,
+    "category": "🥃 Whiskys",
+    "name": "Johnny Walker Black",
+    "description": "Garrafa",
+    "price": 340,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 62,
+    "code": 62,
+    "category": "🥃 Whiskys",
+    "name": "Johnny Walker Gold",
+    "description": "Garrafa",
+    "price": 490,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 63,
+    "code": 63,
+    "category": "🥃 Whiskys",
+    "name": "Old Parr 1Lt",
+    "description": "Garrafa",
+    "price": 360,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 64,
+    "code": 64,
+    "category": "🥃 Whiskys",
+    "name": "Buchannan's",
+    "description": "Garrafa",
+    "price": 360,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 65,
+    "code": 65,
+    "category": "🥃 Whiskys",
+    "name": "Chivas 12 Anos",
+    "description": "Garrafa",
+    "price": 230,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 66,
+    "code": 66,
+    "category": "🪵 Cachaças",
+    "name": "Vale do Riachão",
+    "description": "Dose",
+    "price": 10,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 67,
+    "code": 67,
+    "category": "🪵 Cachaças",
+    "name": "Boazinha",
+    "description": "Dose",
+    "price": 14,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 68,
+    "code": 68,
+    "category": "🪵 Cachaças",
+    "name": "Sagatiba",
+    "description": "Dose",
+    "price": 20,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 69,
+    "code": 69,
+    "category": "🍋 Caipirinhas",
+    "name": "Vodka Smirnoff",
+    "description": "—",
+    "price": 30,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 70,
+    "code": 70,
+    "category": "🍋 Caipirinhas",
+    "name": "Vodka Absolut",
+    "description": "—",
+    "price": 40,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 71,
+    "code": 71,
+    "category": "🍋 Caipirinhas",
+    "name": "Tequila",
+    "description": "—",
+    "price": 35,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 72,
+    "code": 72,
+    "category": "🍋 Caipirinhas",
+    "name": "Saquê",
+    "description": "—",
+    "price": 48,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 73,
+    "code": 73,
+    "category": "🍋 Caipirinhas",
+    "name": "Caipireja Heineken",
+    "description": "Escolha a cerveja",
+    "price": 45,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 74,
+    "code": 74,
+    "category": "🍋 Caipirinhas",
+    "name": "Caipireja Amstel",
+    "description": "Escolha a cerveja",
+    "price": 42,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 75,
+    "code": 75,
+    "category": "🍋 Caipirinhas",
+    "name": "Caipireja Stella Artois",
+    "description": "Escolha a cerveja",
+    "price": 42,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 76,
+    "code": 76,
+    "category": "🍋 Caipirinhas",
+    "name": "Caipireja Sem Álcool",
+    "description": "Escolha a cerveja",
+    "price": 42,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 77,
+    "code": 77,
+    "category": "🍸 Drinks",
+    "name": "Gin Tônica",
+    "description": "—",
+    "price": 35,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 78,
+    "code": 78,
+    "category": "🍸 Drinks",
+    "name": "Tropical",
+    "description": "—",
+    "price": 38,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 79,
+    "code": 79,
+    "category": "🍸 Drinks",
+    "name": "Passionberry",
+    "description": "—",
+    "price": 36,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 80,
+    "code": 80,
+    "category": "🍸 Drinks",
+    "name": "Aperol Spritz",
+    "description": "—",
+    "price": 44,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 81,
+    "code": 81,
+    "category": "🍸 Drinks",
+    "name": "Margarita",
+    "description": "—",
+    "price": 36,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 82,
+    "code": 82,
+    "category": "🍸 Drinks",
+    "name": "Moskow Mule",
+    "description": "—",
+    "price": 42,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 83,
+    "code": 83,
+    "category": "🍸 Drinks",
+    "name": "Mojito",
+    "description": "—",
+    "price": 36,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 84,
+    "code": 84,
+    "category": "🍸 Drinks",
+    "name": "Negroni",
+    "description": "—",
+    "price": 34,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 85,
+    "code": 85,
+    "category": "🧃 Drinks Sem Álcool",
+    "name": "Red Passion",
+    "description": "—",
+    "price": 42,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 86,
+    "code": 86,
+    "category": "🧃 Drinks Sem Álcool",
+    "name": "Strawberry Mojito",
+    "description": "—",
+    "price": 42,
+    "sell_type": "UN",
+    "printer": "BAR"
+  },
+  {
+    "position": 87,
+    "code": 87,
+    "category": "🍊 Sucos",
+    "name": "Suco Del Valle",
+    "description": "—",
+    "price": 10,
+    "sell_type": "UN",
+    "printer": "BAR"
+  }
+]
