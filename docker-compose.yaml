@@ -18,14 +18,17 @@ services:
     env_file:
       - docker.env
     ports:
-      - 127.0.0.1:8001:8000
+      - "8001:8000"
     volumes:
       - ./src:/srv:delegated
-    command:
-      - python3
-      - manage.py
-      - runserver
-      - "0.0.0.0:8000"
+    command: >
+      sh -c "
+      python manage.py migrate &&
+      uvicorn chefchefe.asgi:application
+      --host 0.0.0.0
+      --port 8000
+      --reload
+      "
     depends_on:
       - postgres
       
