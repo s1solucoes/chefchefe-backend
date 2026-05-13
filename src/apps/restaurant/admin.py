@@ -17,7 +17,6 @@ class EmployeeInline(admin.StackedInline):
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
     inlines = [UserRestaurantInline, EmployeeInline]
-    readonly_fields = ('token',)
     search_fields = ('name', 'slug', 'token')
     list_display = ('name','token')
     fieldsets = (

@@ -1,6 +1,6 @@
 from rest_framework.viewsets import ModelViewSet, ViewSet
-from apps.products.models import Product, ComplementGroup, Complement, Order, Bill, BillGroup
-from apps.restaurant.models import PrintJob, Restaurant, Table
+from apps.products.models import Category, Product, ComplementGroup, Complement, Order, Bill, BillGroup
+from apps.restaurant.models import PrintJob, Printer, Restaurant, Table
 from .serializers import CashierDetailSerializer, PrintJobSerializer, ProductSerializer, CreateOrderSerializer, BillSerializer, BillDetailSerializer, RestaurantSerializer, TableSerializer, BillGroupSerializer, CashierSerializer, PaymentMethodSerializer, SaleSerializer, TransactionSerializer
 from django_filters import rest_framework as filters
 from apps.financial.models import Cashier, PaymentMethod, Transaction, Sale
@@ -9,6 +9,7 @@ from django.db.models import Prefetch, Q, Sum, Avg, Count, F
 from rest_framework.response import Response
 from django.db import transaction
 from rest_framework.pagination import PageNumberPagination
+from django.utils.text import slugify
 class TableViewSet(ModelViewSet):
     serializer_class = TableSerializer
     http_method_names = ['get']
@@ -422,3 +423,32 @@ class PrintJobViewSet(ModelViewSet):
                 'found': False,
                 'print_job': None
             }, status=200)
+
+
+
+class ImportProductsViewSet(ViewSet):
+    http_method_names = ['post']
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        token = request.query_params.get('token')
+        products_data = request.data
+        # name, category, description, price, code, sell_type, position, printer
+        restaurant = Restaurant.objects.filter(token=token).first()
+        for product_data in products_data:
+            category, _ = Category.objects.get_or_create(name=product_data.get('category'), restaurant=restaurant)
+            printer, _ = Printer.objects.get_or_create(name=product_data.get('printer'), restaurant=restaurant)
+            product, created = Product.objects.update_or_create(
+                slug=slugify(product_data.get('name')),
+                restaurant=restaurant,
+                defaults={
+                    "name": product_data.get('name'),
+                    "category": category,
+                    "description": product_data.get('description'),
+                    "price": product_data.get('price'),
+                    "code": product_data.get('code'),
+                    "sell_type": product_data.get('sell_type', 'UN'),
+                    "position": product_data.get('position', 0),
+                    "printer": printer
+                }
+            )
+        return Response({'detail': 'Produtos importados com sucesso.'}, status=200)
