@@ -188,7 +188,6 @@ class Printer(BaseModel):
         verbose_name = 'impressora'
         verbose_name_plural = 'impressoras'
         ordering = ['-created']
-        unique_together = ['name', 'restaurant']
 
     def __str__(self):
         return self.name + ' - ' + self.restaurant.name
