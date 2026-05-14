@@ -253,6 +253,7 @@ class BillGroupSerializer(serializers.ModelSerializer):
 
 class BillSerializer(serializers.ModelSerializer):
     code = serializers.CharField(write_only=True, required=True)
+    close_message = serializers.CharField(write_only=True, required=False)
     class Meta:
         model = Bill
         fields = [
@@ -266,6 +267,8 @@ class BillSerializer(serializers.ModelSerializer):
             'closed_at',
             'opened_at',
             'code',
+            'close_message',
+            'close_detail'
         ]
 
     def create(self, validated_data):
@@ -278,6 +281,29 @@ class BillSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'detail': 'Código de funcionário inválido.'})
         validated_data['opened_by'] = employee
         return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        code = validated_data.pop('code', None)
+        if validated_data.get('is_open') == False and instance.is_open == True:
+            if code:
+                try:
+                    employee = Employee.objects.get(code=code, is_active=True, is_deleted=False, restaurant_id=instance.restaurant_id)
+                    if not employee.can_delete_bill:
+                        raise serializers.ValidationError({'detail': 'Funcionário não tem permissão para fechar comandas.'})
+                except Employee.DoesNotExist:
+                    raise serializers.ValidationError({'detail': 'Código de funcionário inválido.'})
+                instance.is_open = False
+                instance.closed_at = timezone.now()
+                instance.close_detail = {
+                    'closed_by': str(employee.id),
+                    'closed_by_name': employee.name,
+                    'closed_at': instance.closed_at.isoformat(),
+                    'detail': validated_data.pop('close_message', ''),
+                    'type': 'all_close',
+                }
+            if not code:
+                raise serializers.ValidationError({'detail': 'Código de funcionário é obrigatório para fechar uma comanda.'})
+        return super().update(instance, validated_data)
 
 
 class BillInGroupDetailSerializer(serializers.ModelSerializer):

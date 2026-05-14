@@ -191,11 +191,11 @@ class CreateOrderViewSet(ViewSet):
                     payload={
                         "printerName": order.product.printer.name,
                         "order": {
-                            "number_id": str(order.id),
+                            "number_id": str(order.number),
                             "table": order.bill.table.number if order.bill.table else "",
                             "identification": order.bill.identification or "",
                             "bill_number": order.bill.number or "",
-                            "waiter": order.launched_by_name or "",
+                            "waiter": order.launched_by.name if order.launched_by else "",
                             "quantity": order.quantity or 0,
                             "product_name": order.product.name if order.product else "",
                             "notes": order.notes or "",

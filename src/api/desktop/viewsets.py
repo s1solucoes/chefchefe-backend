@@ -115,7 +115,7 @@ class BillFilter(filters.FilterSet):
 
 class BillViewSet(ModelViewSet):
     serializer_class = BillSerializer
-    http_method_names = ['get', 'post']
+    http_method_names = ['get', 'post', 'patch']
     pagination_class = None
     filter_backends = [DjangoFilterBackend]
     filterset_class = BillFilter
