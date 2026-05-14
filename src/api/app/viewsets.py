@@ -98,7 +98,7 @@ class BillFilter(filters.FilterSet):
     closed_at__gte = filters.DateTimeFilter(method='filter_closed_at__gte')
     class Meta:
         model = Bill
-        fields = ['number', 'is_open', 'free_group', 'current_group', 'closed_at__gte']
+        fields = ['number', 'is_open', 'free_group', 'current_group', 'closed_at__gte', 'table']
 
     def filter_closed_at__gte(self, queryset, name, value):
         if value:
