@@ -159,7 +159,6 @@ class Employee(BaseModel):
     can_change_payment = models.BooleanField('pode alterar pagamento', default=False)
     can_open_cashier = models.BooleanField('pode abrir caixa', default=False)
     can_close_cashier = models.BooleanField('pode fechar caixa', default=False)
-
     office = models.CharField('cargo', max_length=255, blank=True, default='')
     sallary = models.DecimalField('salário', max_digits=10, decimal_places=2, default=0.0)
     payment_day = models.PositiveIntegerField('dia de pagamento', default=0)

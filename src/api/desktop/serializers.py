@@ -86,6 +86,7 @@ class CreateOrderSerializer(serializers.ModelSerializer):
     bill_number = serializers.CharField(source='bill.number', read_only=True)
     bill_identification = serializers.CharField(source='bill.identification', read_only=True)
     printer_name = serializers.CharField(source='product.printer.name', read_only=True)
+    new_bill = serializers.UUIDField(write_only=True, required=False)
     class Meta:
         model = Order
         read_only_fields = ['id', 'number', 'launched_by']
@@ -109,6 +110,7 @@ class CreateOrderSerializer(serializers.ModelSerializer):
             'bill_number',
             'bill_identification',
             'printer_name',
+            'new_bill',
         ]
 
     @transaction.atomic
@@ -176,8 +178,8 @@ class CreateOrderSerializer(serializers.ModelSerializer):
         return order
     
     def update(self, instance, validated_data):
+        code = validated_data.pop('code', None)
         if validated_data.get('status') == 'CANCELED':
-            code = validated_data.pop('code', None)
             if code:
                 try:
                     employee = Employee.objects.get(code=code, is_active=True, is_deleted=False, restaurant_id=instance.restaurant_id)
@@ -189,6 +191,26 @@ class CreateOrderSerializer(serializers.ModelSerializer):
                 instance.canceled_by_name = employee.name
             if not code:
                 raise serializers.ValidationError({'detail': 'Código de funcionário é obrigatório para cancelar um pedido.'})
+        new_bill_id = validated_data.pop('new_bill', None)
+        if new_bill_id:
+            if code:
+                try:
+                    employee = Employee.objects.get(code=code, is_active=True, is_deleted=False, restaurant_id=instance.restaurant_id)
+                    if not employee.can_transfer_order:
+                        raise serializers.ValidationError({'detail': 'Funcionário não tem permissão para mover pedidos.'})
+                except Employee.DoesNotExist:
+                    raise serializers.ValidationError({'detail': 'Código de funcionário inválido.'})
+                last_bills = instance.last_bills or []
+                last_bills.append({
+                    'bill_id': str(instance.bill_id),
+                    'bill_number': instance.bill.number,
+                    'moved_at': timezone.now().isoformat(),
+                    'moved_by': f'{employee.name}',
+                })
+                instance.last_bills = last_bills
+                instance.bill_id = new_bill_id
+            if not code:
+                raise serializers.ValidationError({'detail': 'Código de funcionário é obrigatório para mover um pedido.'})
         return super().update(instance, validated_data)
     
 class OrderListSerializer(serializers.ModelSerializer):

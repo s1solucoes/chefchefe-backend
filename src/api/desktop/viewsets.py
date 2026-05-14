@@ -452,3 +452,10 @@ class ImportProductsViewSet(ViewSet):
                 }
             )
         return Response({'detail': 'Produtos importados com sucesso.'}, status=200)
+
+
+class CashierStats(ViewSet):
+    http_method_names = ['get']
+
+    def list(self, request, *args, **kwargs):
+        pass

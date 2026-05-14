@@ -193,6 +193,7 @@ class Order(BaseModel):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='orders')
 
     complements_details = models.JSONField('detalhes dos complementos', blank=True, null=True)
+    last_bills = models.JSONField('últimas comanda', blank=True, null=True, default=list)
     class Meta:
         verbose_name = 'pedido'
         verbose_name_plural = 'pedidos'
