@@ -9,6 +9,14 @@ class CashierAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('identification', 'restaurant__name')
 
+    actions = ['set_stats_url']
+
+    def set_stats_url(self, request, queryset):
+        for cashier in queryset:
+            stats_url = f'http://192.168.46.21:8001/api/relatorio/?cashier_id={cashier.id}'
+            cashier.stats_url = stats_url
+            cashier.save()
+
 
 @admin.register(PaymentMethod)
 class PaymentMethodAdmin(admin.ModelAdmin):

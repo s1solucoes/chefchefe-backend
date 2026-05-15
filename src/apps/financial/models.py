@@ -29,7 +29,7 @@ class Cashier(BaseModel):
     final_value = models.DecimalField('valor final', max_digits=10, decimal_places=2, default=0.00)
 
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='cashiers')
-
+    stats_url = models.URLField('url das estatísticas', blank=True, default='')
     def get_current_value(self):
         return self.transactions.filter(status='COMPLETED').aggregate(total=models.Sum('amount'))['total'] or 0.00
 

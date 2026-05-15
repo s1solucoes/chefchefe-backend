@@ -1,12 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            max-width: 80mm;
+        }
+
+        h3 {
+            color: #333;
+        }
+
+        p {
+            font-size: 16px;
+            color: #555;
+        }
+    </style>
 </head>
+
 <body>
-<!--         context['bills_count'] = bills.count()
+    <!--         context['bills_count'] = bills.count()
         context['closed_bills_count'] = closed_bills.count()
         context['total_revenue'] = bills.aggregate(total_revenue=Sum('sale__balance'))['total_revenue'] or 0
         context['orders_stats'] = orders_stats
@@ -15,24 +33,49 @@
         context['payment_methods_exchange'] = payment_methods_exchange
         context['final_methods'] = final_methods -->
 
-<h3>Relatório do Caixa</h3>
-<h3>GATINHO</h3>
-<h4>DATA: {{ date }}</h4>
+    <h3>Relatório do Caixa</h3>
+    <center>
+        <h3>GATINHO</h3>
+    </center>
+    <h4>ABERTO EM: {{ date }}</h4>
+    <h4>FECHADO EM: {{ date }}</h4>
+    <p>Caixa: {{ cashier.identification }}</p>
+    <hr>
+    <p>Total de comandas pagas: {{ bills_count }}</p>
+    <p>Total de comandas canceladas: {{ closed_bills_count }}</p>
+    <p>total de Pedidos validos: {{ orders.count }}</p>
+    <p>Pedidos cancelados: {{ canceled_orders.count }}</p>
+    <p>Receita total: R$ {{ total_revenue }}</p>
+    <hr>
+    <h3>
+        Formas de pagamento:
+    </h3>
 
-<p>Total de comandas: {{ bills_count }}</p>
-<p>Total de comandas canceladas: {{ closed_bills_count }}</p>
-<p>Pedidos cancelados: {{ canceled_orders.count }}</p>
-<p>Receita total: R$ {{ total_revenue }}</p>
-<h3>
-    Formas de pagamento:
-</h3>
+    <ul style="padding-left: 10px; margin: 0">
 
-{% for pay in  final_methods%}
-<h4>
-     {{pay.method}} - R$ {{pay.net_amount}}
-</h4>
-{% endfor %}
+        {% for pay in final_methods%}
+        <li style="padding-left: 10px; margin: 0;">
+            <strong>Valor em {{pay.method}}:</strong> <br>R$ {{pay.total_amount}}<br>
+            <strong>quantidade:</strong> {{pay.transaction_count}}
+        </li>
+        {% endfor %}
+    </ul>
+    <hr>
+    <h3>
+        Vendas por produto  :
+    </h3>
+
+    <ul style="padding-left: 10px; margin: 0">
+
+        {% for pay in orders_stats%}
+        <li style="padding-left: 10px; margin: 0; margin-bottom: 5px;">
+            <strong>{{pay.product__name}}:</strong> <br>R$ {{pay.total_revenue}}<br>
+            <strong>quantidade:</strong> {{pay.total_quantity}}
+        </li>
+        {% endfor %}
+    </ul>
 
 
 </body>
+
 </html>

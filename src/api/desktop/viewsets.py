@@ -459,13 +459,17 @@ class CashierStats(ViewSet):
 
     def list(self, request, *args, **kwargs):
         cashier_id = request.query_params.get('cashier_id')
+        closed_bills_ = Bill.objects.filter(
+            is_open=False,
+            sale__isnull=True,
+        ).update(cashier_id=cashier_id)
 
         bills = Bill.objects.filter(
             Q(sale__cashier_id=cashier_id),
             is_open=False,
         ).select_related('sale')
 
-        closed_bills = bills.filter(
+        closed_bills = Bill.objects.filter(
             is_open=False,
             cashier_id=cashier_id, 
             sale__isnull=True

@@ -27,5 +27,5 @@ urlpatterns = [
     path('api/v1/app/', include(router_app.urls)),
     path('api/v1/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v1/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('relatorio/', StatsView.as_view(), name='stats'),
+    path('api/relatorio/', StatsView.as_view(), name='stats'),
 ]

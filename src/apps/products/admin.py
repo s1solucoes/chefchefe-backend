@@ -31,6 +31,7 @@ class ComplementGroupAdmin(admin.ModelAdmin):
 
 @admin.register(Bill)
 class BillAdmin(admin.ModelAdmin):
+    list_display = ('number', 'table', 'restaurant', 'is_open', 'created')
     search_fields = ('number', 'identification', 'restaurant__name')
 
 class OrderComplementInline(admin.TabularInline):
