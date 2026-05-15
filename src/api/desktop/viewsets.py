@@ -458,4 +458,39 @@ class CashierStats(ViewSet):
     http_method_names = ['get']
 
     def list(self, request, *args, **kwargs):
-        pass
+        restaurant_id = request.auth.get('restaurant_id')
+        cashier_id = request.query_params.get('cashier_id')
+
+        bills = Bill.objects.filter(
+            Q(sale__cashier_id=cashier_id),
+            is_open=False,
+        ).select_related('sale')
+
+        closed_bills = bills.filter(
+            is_open=False,
+            cashier_id=cashier_id, 
+            sale__is_null=False
+        ).select_related('sale')
+
+        orders_stats = Order.objects.filter(
+            bill__in=bills,
+        ).exclude(status='CANCELED').values('product__name').annotate(
+            total_quantity=Sum('quantity'),
+            total_revenue=Sum('total_price')
+        ).order_by('-total_revenue')
+
+        canceled_orders = Order.objects.filter(
+            bill__in=bills,
+            status='CANCELED'
+        ).values('product__name').annotate(
+            total_quantity=Sum('quantity'),
+            total_revenue=Sum('total_price')
+        ).order_by('-total_revenue')
+
+        payment_methods = Sale.objects.filter(
+            cashier_id=cashier_id,
+            status='COMPLETED'
+        ).values('payment_method__description').annotate(
+            total_amount=Sum('amount'),
+            transaction_count=Count('id')
+        ).order_by('-total_amount')

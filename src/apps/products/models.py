@@ -4,7 +4,7 @@ from django.db import models, transaction
 from model_utils.models import TimeStampedModel, UUIDModel
 from model_utils.fields import MonitorField
 from apps.restaurant.models import Restaurant, Printer, Table, Employee, NumberIdCounter
-from apps.financial.models import Sale
+from apps.financial.models import Cashier, Sale
 
 from django.utils import timezone
 
@@ -136,7 +136,7 @@ class Bill(BaseModel):
     sale = models.ForeignKey(Sale, on_delete=models.SET_NULL, related_name='bills', null=True, blank=True)
 
     close_detail = models.JSONField('detalhes do fechamento', blank=True, null=True, default=dict)
-
+    cashier_id = models.ForeignKey(Cashier, on_delete=models.SET_NULL, related_name='bills', null=True, blank=True)
     class Meta:
         verbose_name = 'comanda'
         verbose_name_plural = 'comandas'
