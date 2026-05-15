@@ -13,12 +13,12 @@
         }
 
         h3 {
-            color: #333;
+            color: #000;
         }
 
         p {
             font-size: 16px;
-            color: #555;
+            color: #000;
         }
     </style>
 </head>
@@ -38,12 +38,15 @@
         <h3>GATINHO</h3>
     </center>
     <h4>ABERTO EM: {{ date }}</h4>
-    <h4>FECHADO EM: {{ date }}</h4>
+    <h4>FECHADO EM: {{ close_date }}</h4>
     <p>Caixa: {{ cashier.identification }}</p>
     <hr>
-    <p>Total de comandas pagas: {{ bills_count }}</p>
-    <p>Total de comandas canceladas: {{ closed_bills_count }}</p>
-    <p>total de Pedidos validos: {{ orders.count }}</p>
+    <h3>
+        --- Comandas ---:
+    </h3>
+    <p>Comandas pagas: {{ bills_count }}</p>
+    <p>Comandas canceladas: {{ closed_bills_count }}</p>
+    <p>Pedidos validos: {{ orders.count }}</p>
     <p>Pedidos cancelados: {{ canceled_orders.count }}</p>
     <p>Receita total: R$ {{ total_revenue }}</p>
     <hr>
@@ -54,7 +57,7 @@
     <ul style="padding-left: 10px; margin: 0">
 
         {% for pay in final_methods%}
-        <li style="padding-left: 10px; margin: 0;">
+        <li style="padding-left: 10px; margin: 0; margin-bottom: 10px;">
             <strong>Valor em {{pay.method}}:</strong> <br>R$ {{pay.total_amount}}<br>
             <strong>quantidade:</strong> {{pay.transaction_count}}
         </li>
