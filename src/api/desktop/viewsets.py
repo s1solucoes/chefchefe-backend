@@ -458,7 +458,6 @@ class CashierStats(ViewSet):
     http_method_names = ['get']
 
     def list(self, request, *args, **kwargs):
-        restaurant_id = request.auth.get('restaurant_id')
         cashier_id = request.query_params.get('cashier_id')
 
         bills = Bill.objects.filter(
@@ -469,7 +468,7 @@ class CashierStats(ViewSet):
         closed_bills = bills.filter(
             is_open=False,
             cashier_id=cashier_id, 
-            sale__is_null=False
+            sale__isnull=True
         ).select_related('sale')
 
         orders_stats = Order.objects.filter(
@@ -487,10 +486,42 @@ class CashierStats(ViewSet):
             total_revenue=Sum('total_price')
         ).order_by('-total_revenue')
 
-        payment_methods = Sale.objects.filter(
-            cashier_id=cashier_id,
+        payment_methods = Transaction.objects.filter(
+            sale__cashier_id=cashier_id,
+            type='SALE',
             status='COMPLETED'
-        ).values('payment_method__description').annotate(
+        ).values('payment_method__method').annotate(
             total_amount=Sum('amount'),
             transaction_count=Count('id')
         ).order_by('-total_amount')
+
+        payment_methods_exchange = Transaction.objects.filter(
+            sale__cashier_id=cashier_id,
+            type='EXCHANGE',
+            status='COMPLETED'
+        ).values('payment_method__method').annotate(
+            total_amount=Sum('amount'),
+            transaction_count=Count('id')
+        ).order_by('-total_amount')
+
+        final_methods = []
+        for method in payment_methods:
+            data = {
+                'method': method['payment_method__method'],
+                'total_amount': method['total_amount'],
+                'transaction_count': method['transaction_count'],
+                'exchange_amount': payment_methods_exchange.filter(payment_method__method=method['payment_method__method']).aggregate(total_exchange=Sum('amount'))['total_exchange'] or 0
+            }
+            data['net_amount'] = data['total_amount'] + data['exchange_amount']
+            final_methods.append(data)
+
+        return Response({
+            'bills_count': bills.count(),
+            'closed_bills_count': closed_bills.count(),
+            'total_revenue': bills.aggregate(total_revenue=Sum('sale__balance'))['total_revenue'] or 0,
+            'orders_stats': orders_stats,
+            'canceled_orders': canceled_orders,
+            'payment_methods': payment_methods,
+            'payment_methods_exchange': payment_methods_exchange,
+            'final_methods': final_methods
+        })

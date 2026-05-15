@@ -58,7 +58,9 @@ class PaymentMethod(BaseModel):
         verbose_name = 'método de pagamento'
         verbose_name_plural = 'métodos de pagamento'
         ordering = ['position', 'method']
-
+    @staticmethod
+    def get_display(method=None):
+        return MethodsChoices(method).label if method in MethodsChoices.values else method
     @property
     def display_name(self):
         d_name = MethodsChoices(self.method).label if self.method in MethodsChoices.values else self.method

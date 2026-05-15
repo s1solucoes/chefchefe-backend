@@ -28,6 +28,6 @@ class SaleAdmin(admin.ModelAdmin):
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'sale', 'amount', 'method', 'status', 'created')
-    list_filter = ('method', 'status', 'created')
+    list_display = ('payment_method', 'sale', 'amount', 'status', 'created')
+    list_filter = ('payment_method', 'status', 'created')
     search_fields = ('sale__code',)

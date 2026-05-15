@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<!--         context['bills_count'] = bills.count()
+        context['closed_bills_count'] = closed_bills.count()
+        context['total_revenue'] = bills.aggregate(total_revenue=Sum('sale__balance'))['total_revenue'] or 0
+        context['orders_stats'] = orders_stats
+        context['canceled_orders'] = canceled_orders
+        context['payment_methods'] = payment_methods
+        context['payment_methods_exchange'] = payment_methods_exchange
+        context['final_methods'] = final_methods -->
+
+<h3>Relatório do Caixa</h3>
+<h3>GATINHO</h3>
+<h4>DATA: {{ date }}</h4>
+
+<p>Total de comandas: {{ bills_count }}</p>
+<p>Total de comandas canceladas: {{ closed_bills_count }}</p>
+<p>Pedidos cancelados: {{ canceled_orders.count }}</p>
+<p>Receita total: R$ {{ total_revenue }}</p>
+<h3>
+    Formas de pagamento:
+</h3>
+
+{% for pay in  final_methods%}
+<h4>
+     {{pay.method}} - R$ {{pay.net_amount}}
+</h4>
+{% endfor %}
+
+
+</body>
+</html>

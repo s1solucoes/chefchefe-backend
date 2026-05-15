@@ -5,6 +5,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from apps.financial.views import StatsView
 from apps.user.urls import user_router
 from apps.restaurant.urls import restaurant_router
 from apps.products.urls import bill_router
@@ -26,4 +27,5 @@ urlpatterns = [
     path('api/v1/app/', include(router_app.urls)),
     path('api/v1/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v1/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('relatorio/', StatsView.as_view(), name='stats'),
 ]

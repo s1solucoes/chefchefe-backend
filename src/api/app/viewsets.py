@@ -146,6 +146,7 @@ class CreateOrderViewSet(ViewSet):
         restaurant_id = self.request.auth.get('restaurant_id')
         employee_id = self.request.auth.get('employee_id')
         if not restaurant_id or not employee_id:
+            
             return Response({'detail': 'Autenticação inválida.'}, status=401)
         orders = request.data.get('orders', [])
         if not isinstance(orders, list):
