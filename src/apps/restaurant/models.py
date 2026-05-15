@@ -74,6 +74,7 @@ class Restaurant(BaseModel):
     tip_aplyed_by_default = models.BooleanField('gorjeta aplicada por padrão', default=False)
     tip_type = models.CharField('tipo da gorjeta', choices=TipTypes.choices, default=TipTypes.PERCENTAGE, max_length=10)
 
+    cashier_default_counter_bill_start = models.PositiveIntegerField('número inicial padrão das comandas do balcão', default=1)
     cashier_default_initial_value = models.DecimalField('valor inicial padrão do caixa', max_digits=10, decimal_places=2, default=0.0)
 
     status = models.CharField('status', choices=StatusChoices.choices, default=StatusChoices.TESTING, max_length=10)

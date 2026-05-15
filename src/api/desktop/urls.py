@@ -14,7 +14,9 @@ from .viewsets import (
     TransactionViewSet,
     PrintJobViewSet,
     ImportProductsViewSet,
-    CashierStats
+    CashierStats,
+    SendOrderSaleViewSet
+    
 )
 router_desktop = DefaultRouter()
 router_desktop.register(r'products', ProductViewSet, basename='desktop-product')
@@ -32,3 +34,4 @@ router_desktop.register(r'transactions', TransactionViewSet, basename='desktop-t
 router_desktop.register(r'print-jobs', PrintJobViewSet, basename='desktop-print-job')
 router_desktop.register(r'import-products', ImportProductsViewSet, basename='desktop-import-products')
 router_desktop.register(r'cashier-stats', CashierStats, basename='desktop-cashier-stats')
+router_desktop.register(r'send-counter-sale', SendOrderSaleViewSet, basename='desktop-send-order-sale')

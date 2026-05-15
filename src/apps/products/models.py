@@ -136,7 +136,7 @@ class Bill(BaseModel):
     sale = models.ForeignKey(Sale, on_delete=models.SET_NULL, related_name='bills', null=True, blank=True)
 
     close_detail = models.JSONField('detalhes do fechamento', blank=True, null=True, default=dict)
-    cashier_id = models.ForeignKey(Cashier, on_delete=models.SET_NULL, related_name='bills', null=True, blank=True)
+    cashier = models.ForeignKey(Cashier, on_delete=models.SET_NULL, related_name='bills', null=True, blank=True)
     class Meta:
         verbose_name = 'comanda'
         verbose_name_plural = 'comandas'

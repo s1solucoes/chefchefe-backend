@@ -1,6 +1,6 @@
 from rest_framework.viewsets import ModelViewSet, ViewSet
 from apps.products.models import Category, Product, ComplementGroup, Complement, Order, Bill, BillGroup
-from apps.restaurant.models import PrintJob, Printer, Restaurant, Table
+from apps.restaurant.models import Employee, PrintJob, Printer, Restaurant, Table
 from .serializers import CashierDetailSerializer, PrintJobSerializer, ProductSerializer, CreateOrderSerializer, BillSerializer, BillDetailSerializer, RestaurantSerializer, TableSerializer, BillGroupSerializer, CashierSerializer, PaymentMethodSerializer, SaleSerializer, TransactionSerializer
 from django_filters import rest_framework as filters
 from apps.financial.models import Cashier, PaymentMethod, Transaction, Sale
@@ -356,6 +356,7 @@ class FinishBillsViewSet(ViewSet):
         for bill in bills:
             bill.is_open = False
             bill.sale = sale
+            bill.cashier_id = cashier_id
             bill.save()
         return Response({'detail': 'Contas finalizadas com sucesso.'}, status=200)
     
@@ -529,3 +530,102 @@ class CashierStats(ViewSet):
             'payment_methods_exchange': payment_methods_exchange,
             'final_methods': final_methods
         })
+    
+
+class SendOrderSaleViewSet(ViewSet):
+    http_method_names = ['post']
+
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        cashier_id = request.data.get('cashier')
+        orders = request.data.get('orders', [])
+        subtotal = request.data.get('subtotal', 0)
+        discount = request.data.get('discount', 0)
+        exchange = request.data.get('change', 0)
+        payments = request.data.get('payments', [])
+        total = request.data.get('total', 0)
+        total_received = request.data.get('total_received', 0)
+        code = request.data.get('code', None)
+        if code:
+            employee = Employee.objects.filter(code=code, restaurant_id=request.auth.get('restaurant_id')).first()
+            if not employee:
+                return Response({'detail': 'Código de funcionário inválido.'}, status=400)
+        else:
+            return Response({'detail': 'Código de funcionário é obrigatório.'}, status=400)
+        if not cashier_id:
+            return Response({'detail': 'Caixa não fornecido.'}, status=400)
+        cashier = Cashier.objects.filter(id=cashier_id, is_open=True).first()
+        if not cashier:
+            return Response({'detail': 'Caixa não encontrado ou já fechado.'}, status=404)
+            
+        sale = Sale.objects.create(
+            cashier=cashier,
+            status='COMPLETED',
+            subtotal=subtotal,
+            discount=discount,
+            exchange=exchange,
+            received=total_received,
+            tip_value=0,
+            tip_percentage=0,
+            total=total,
+            balance=total_received - exchange,
+            restaurant_id=cashier.restaurant_id
+        )
+        bill = Bill.objects.create(
+            number=Cashier.get_next_counter_bill_number(cashier),
+            identification="VENDA BALCÃO",
+            is_open=False,
+            opened_at=sale.created,
+            closed_at=sale.created,
+            sale=sale,
+            cashier=cashier,
+            restaurant_id=cashier.restaurant_id,
+            opened_by=employee
+        )
+        for order_data in orders:
+            Order.objects.create(
+                bill=bill,
+                product_id=order_data['product'],
+                notes=order_data.get('notes', ''),
+                status="DELIVERED",
+                quantity=order_data['quantity'],
+                total_price=order_data['quantity'] * order_data['unit_price'],
+                unit_price=order_data['unit_price'],
+                restaurant_id=cashier.restaurant_id,
+                launched_by=employee,
+            )
+        
+        for payment in payments:
+            payment_method_id = payment.get('method')
+            amount = payment.get('amount')
+            if not payment_method_id or amount is None:
+                 return Response({'detail': 'Dados de pagamento incompletos.'}, status=400)
+            tx = Transaction.objects.create(
+                sale=sale,
+                cashier=cashier,
+                payment_method_id=payment_method_id,
+                amount=amount,
+                type='SALE',
+                status='COMPLETED',
+                description=f'Pagamento recebido venda balcão',
+                restaurant_id=cashier.restaurant_id
+            )
+        
+        if exchange > 0:
+            exmid = request.data.get('change_method')
+            exchange_method = None
+            if not exmid:
+                exchange_method = PaymentMethod.objects.filter(restaurant_id=cashier.restaurant_id, method='CASH').first()
+            else:
+                exchange_method = PaymentMethod.objects.filter(id=exmid, restaurant_id=cashier.restaurant_id).first()
+            Transaction.objects.create(
+                sale=sale,
+                cashier=cashier,
+                amount=-exchange,
+                payment_method=exchange_method,
+                type='EXCHANGE',
+                status='COMPLETED',
+                description='Troco devolvido ao cliente',
+                restaurant_id=cashier.restaurant_id
+            )
+        return Response({'detail': 'Contas finalizadas com sucesso.', 'bill_number': bill.number, 'sale_number': sale.number_id}, status=200)

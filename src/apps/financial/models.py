@@ -5,6 +5,8 @@ from phonenumber_field.modelfields import PhoneNumberField
 from apps.crm.models import Customer
 from model_utils.fields import MonitorField
 from apps.restaurant.models import Employee, NumberIdCounter, Restaurant
+from django.db import transaction
+from django.db.models import F
 # Create your models here.
 
 class BaseModel(TimeStampedModel, UUIDModel):
@@ -30,13 +32,32 @@ class Cashier(BaseModel):
 
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='cashiers')
     stats_url = models.URLField('url das estatísticas', blank=True, default='')
+
+    last_counter_bill_number = models.PositiveIntegerField('último número de comanda balcao', default=0)
     def get_current_value(self):
         return self.transactions.filter(status='COMPLETED').aggregate(total=models.Sum('amount'))['total'] or 0.00
+
+    @classmethod
+    def get_next_counter_bill_number(cls, cashier):
+        with transaction.atomic():
+            counter = cls.objects.select_for_update().get(
+                id=cashier.id,
+            )
+            counter.last_counter_bill_number = F('last_counter_bill_number') + 1
+            counter.save()
+            counter.refresh_from_db()
+
+            return counter.last_counter_bill_number
 
     class Meta:
         verbose_name = 'caixa'
         verbose_name_plural = 'caixas'
         ordering = ['-created']
+
+    def save(self, *args, **kwargs):
+        if self.last_counter_bill_number == 0:
+            self.last_counter_bill_number = self.restaurant.cashier_default_counter_bill_start - 1
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.identification} - {self.created.strftime("%d/%m/%Y %H:%M")}'

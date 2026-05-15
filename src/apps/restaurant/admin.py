@@ -37,7 +37,7 @@ class RestaurantAdmin(admin.ModelAdmin):
             'classes': ('collapse', 'extrapretty')
         }),
         ('Caixa', {
-            'fields': ('cashier_default_initial_value',),
+            'fields': ('cashier_default_initial_value', 'cashier_default_counter_bill_start'),
             'classes': ('collapse', 'extrapretty')
         }),
     )
