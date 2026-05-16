@@ -32,6 +32,7 @@ class TransactionInline(admin.TabularInline):
 @admin.register(Sale)
 class SaleAdmin(admin.ModelAdmin):
     inlines = [TransactionInline]
+    list_display = ('number_id', 'cashier', 'total', 'subtotal','balance', 'created')
 
 
 @admin.register(Transaction)

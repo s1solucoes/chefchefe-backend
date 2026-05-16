@@ -48,6 +48,7 @@
     <p>Comandas canceladas: {{ closed_bills_count }}</p>
     <p>Pedidos validos: {{ orders.count }}</p>
     <p>Pedidos cancelados: {{ canceled_orders.count }}</p>
+    <p>Taxas de serviço: R$ {{ total_tax }}</p>
     <p>Receita total: R$ {{ total_revenue }}</p>
     <hr>
     <h3>
@@ -64,6 +65,19 @@
         {% endfor %}
     </ul>
     <hr>
+    <h3>
+        Vendas por garçon  :
+    </h3>
+
+    <ul style="padding-left: 10px; margin: 0">
+
+        {% for pay in employee_stats%}
+        <li style="padding-left: 10px; margin: 0; margin-bottom: 5px;">
+            <strong>{{pay.launched_by__name}}:</strong> <br>R$ {{pay.total_revenue}}<br>
+            <strong>quantidade:</strong> {{pay.total_quantity |default:0}}
+        </li>
+        {% endfor %}
+    </ul>
     <h3>
         Vendas por produto  :
     </h3>
